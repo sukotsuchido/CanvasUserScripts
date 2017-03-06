@@ -138,7 +138,7 @@
     if (el.value && el.value.trim() !== '') {
       childCourse = el.value;
         var childSection;
-        var url = "https://*.instructure.com/api/v1/courses/" + childCourse + "/sections?";
+        var url = "/api/v1/courses/" + childCourse + "/sections?";
         $.ajax({
     'async': true,
     'type': "GET",
@@ -150,7 +150,7 @@
     'success': function (data) {
         childSection = data[0].id;
         childS = childSection;    
-        var url2 = "https://*.instructure.com/api/v1/sections/" + childS + "/crosslist/" + parentC +"?";
+        var url2 = "/api/v1/sections/" + childS + "/crosslist/" + parentC +"?";
     $.ajax({
       'cache' : false,
       'url' : url2 ,
