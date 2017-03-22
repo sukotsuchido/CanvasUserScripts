@@ -13,11 +13,8 @@
     var acc = window.location.pathname;
     var errors = [];
     var parentId = [];
-    var termId1 = "14";
-    var termId2 = "15";
-    var termId = termId2;
-    var semesterLabel1 = "Spring 2017";
-    var semesterLabel2 = "Fall 2017";
+    var termId = '';
+    var termLabel = '';
     var filteredCourses = [];
     var courses = {};
     var dedupThings = [];
@@ -64,10 +61,7 @@
 
     function createDialog() {
         var el = document.querySelector('#jj_cross_dialog');
-
-
         if (!el) {
-
             el = document.createElement('div');
             el.id = 'jj_cross_dialog';
             //Parent Course selection
@@ -85,7 +79,6 @@
             select.onchange = getChildren;
             el5.appendChild(select);
             //childcourse checkboxes
-
             var el6 = document.createElement('fieldset');
             el6.classList.add("ic-Fieldset", "ic-Fieldset--radio-checkbox");
             el.appendChild(el6);
@@ -141,10 +134,10 @@
         }
         setParent();
     }
-     function getCourses(){
+    function getCourses(){
         // Reset global variable errors
         errors= [];
-        var url = "/api/v1/courses?enrollment_type=teacher&inlcude[]=term&per_page=75";
+        var url = "/api/v1/users/self/courses?inlcude[]=term&per_page=75"; //remember to change this to /api/v1/users/2748/courses?include[]=term
         $.ajax({
             'async': true,
             'type': "GET",
@@ -164,10 +157,20 @@
             }
         });
     }
+    function getTerm(dedupThings, prop) {
+        var max;
+        for (var i=0 ; i<dedupThings.length ; i++) {
+            if (!max || parseInt(dedupThings[i][prop]) > parseInt(max[prop]))
+                max = dedupThings[i];
+        }
+        return max;
+    }
     function setParent(){
         var toAppend = '';
         var select = document.getElementById('jj_cross_parentCourse');
         select.options.length = 0; // clear out existing items
+        var getMax = getTerm(dedupThings, "enrollment_term_id");
+        termId = getMax.enrollment_term_id;
         $.each(dedupThings, function(i, o){
             if (o.enrollment_term_id == termId) {
                 toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
@@ -177,7 +180,6 @@
         blank += '<option value="">Please select</option>';
         $('#jj_cross_parentCourse').append(blank); 
         $('#jj_cross_parentCourse').append(toAppend);
-
     }
     function getChildren(){
         var clear = document.getElementById('checkboxes');
@@ -206,7 +208,6 @@
     }
 
     function courseName(){
-
         var newName= [];
         newName = $.map($('input[id="course_name"]'), function(i){return i.value; });
         $.each(newName, function(index, item){
@@ -259,10 +260,7 @@
     }
 
     function setChild() {
-        // Reset global variable errors
-
         array = $.map($('input[name="childCourses"]:checked'), function(c){return c.value; });
-
     }
     function processDialog() {
 
@@ -292,15 +290,10 @@
                 }
             });
         });
-
-
     }
-
-
     function nonameDialog(){
         var el = document.querySelector('#nonamedialog');
         if (!el) {
-
             el = document.createElement('div');
             el.id = 'nonamedialog';
             var el2 = document.createElement('div');
@@ -369,7 +362,6 @@
     function nocrossDialog(){
         var el = document.querySelector('#nocrossdialog');
         if (!el) {
-
             el = document.createElement('div');
             el.id = 'nocrossdialog';
             var el2 = document.createElement('div');
@@ -439,15 +431,11 @@
         courseName();
         setChild();
         if (wholeName !=='' || array !=+ ''){
-
-
             if (wholeName !=='' && array !=+ ''){
                 updateName();
                 processDialog();
-
             } else if (wholeName ==='' && array !=+ ''){
                 opennonameDialog();
-
             }else{
                 opennocrossDialog();
             }
@@ -485,7 +473,6 @@
             icon = document.createElement('i');
             icon.classList.add('icon-warning');
             div2.appendChild(icon);
-
             var ul = document.createElement('ul');
             for (var i = 0; i < errors.length; i++) {
                 var li;
