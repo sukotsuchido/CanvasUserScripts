@@ -137,7 +137,7 @@
     function getCourses(){
         // Reset global variable errors
         errors= [];
-        var url = "/api/v1/users/self/courses?inlcude[]=term&per_page=75"; //remember to change this to /api/v1/users/2748/courses?include[]=term
+        var url = "/api/v1/users/self/courses?inlcude[]=term&per_page=75";
         $.ajax({
             'async': true,
             'type': "GET",
