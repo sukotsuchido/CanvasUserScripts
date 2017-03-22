@@ -25,7 +25,7 @@
     var array =[];
 
     if (assocRegex.test(window.location.pathname)) {
-        add_button();
+        getCourses();
     }
 
     function getCsrfToken() {
@@ -63,7 +63,6 @@
     }
 
     function createDialog() {
-        getCourses();
         var el = document.querySelector('#jj_cross_dialog');
 
 
@@ -140,12 +139,12 @@
             var parent = document.querySelector('body');
             parent.appendChild(el);
         }
-
+        setParent();
     }
-    function getCourses(){
+     function getCourses(){
         // Reset global variable errors
-        errors = [];
-        var url = "/api/v1/courses?inlcude[]=term&per_page=75"; //may need to change per_page to higher number if instructor has LOTS of courses
+        errors= [];
+        var url = "/api/v1/courses?enrollment_type=teacher&inlcude[]=term&per_page=75";
         $.ajax({
             'async': true,
             'type': "GET",
@@ -155,24 +154,30 @@
             'contentType': "application/json",
             'url': url,
             'success': function(courses){
-                var toAppend = '';
-                var select = document.getElementById('jj_cross_parentCourse');
-                select.options.length = 0; // clear out existing items
-
                 dedupThings = Array.from(courses.reduce((m, t) => m.set(t.id, t), new Map()).values());
                 $.each(dedupThings, function(i, o){
-                    if (o.enrollment_term_id == termId) {
-                        toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
+                    if (o.enrollments[0].type == "teacher"){
+                        add_button();
                     }
                 });
-                var blank =''; 
-                blank += '<option value="">Please select</option>';
-                $('#jj_cross_parentCourse').append(blank); 
-                $('#jj_cross_parentCourse').append(toAppend);
 
             }
         });
-        updateMsgs();
+    }
+    function setParent(){
+        var toAppend = '';
+        var select = document.getElementById('jj_cross_parentCourse');
+        select.options.length = 0; // clear out existing items
+        $.each(dedupThings, function(i, o){
+            if (o.enrollment_term_id == termId) {
+                toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
+            }
+        });
+        var blank =''; 
+        blank += '<option value="">Please select</option>';
+        $('#jj_cross_parentCourse').append(blank); 
+        $('#jj_cross_parentCourse').append(toAppend);
+
     }
     function getChildren(){
         var clear = document.getElementById('checkboxes');
