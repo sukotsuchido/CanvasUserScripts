@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Canvas Crosslisting Instructor Tool
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      1.0
+// @version      1.2
 // @description  try to save our time
 // @author       Chad Scott
 // @include     https://*.instructure.com/courses
