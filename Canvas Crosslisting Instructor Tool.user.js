@@ -285,10 +285,19 @@
                         'url' : url2 ,
                         'type' : 'POST',
                     }).done(function() {
+                        setFavorite();
                         closeDialog();
                     });
                 }
             });
+        });
+    }
+    function setFavorite (){
+        var url = "/api/v1/users/self/favorites/courses/" + parentId;
+        $.ajax({
+            'cache' : false,
+            'url' : url ,
+            'type' : 'POST',
         });
     }
     function nonameDialog(){
