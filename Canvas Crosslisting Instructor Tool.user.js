@@ -49,7 +49,7 @@
                 el.classList.add('btn', 'element_toggler');
                 el.id = 'jj_cross';
                 var icon = document.createElement('i');
-                icon.classList.add('icon-import');
+                icon.classList.add('icon-sis-synced');
                 el.appendChild(icon);
                 var txt = document.createTextNode(' Crosslist Courses');
                 el.appendChild(txt);
