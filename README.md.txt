@@ -1,1 +1,0 @@
-UserScripts created to work with Canvas LMS.
