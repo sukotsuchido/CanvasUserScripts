@@ -56,6 +56,20 @@
                 el.addEventListener('click', openDialog);
                 parent.appendChild(el);
             }
+            //de-crosslist button
+            var el2 = parent.querySelector('#jj_decross');
+            if (!el2) {
+                el2 = document.createElement('a');
+                el2.classList.add('btn', 'element_toggler', 'button-sidebar-wide');
+                el2.id = 'jj_decross';
+                var icon2 = document.createElement('i');
+                icon2.classList.add('icon-sis-not-synced');
+                el2.appendChild(icon2);
+                var txt2 = document.createTextNode(' De-Crosslist Courses');
+                el2.appendChild(txt2);
+                el2.addEventListener('click', openDialog2);
+                parent.appendChild(el2);
+            }
         }
     }
 
