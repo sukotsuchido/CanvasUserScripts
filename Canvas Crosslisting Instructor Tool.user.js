@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Canvas Crosslisting Instructor Tool
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      1.2
-// @description  try to save our time
+// @version      1.3
+// @description  A Canvas UserScript to facilitate crosslisting and de-crosslisting of courses.
 // @author       Chad Scott
 // @include     https://*.instructure.com/courses
 // @grant        none
@@ -236,20 +236,22 @@
                 'autoOpen' : false,
                 'closeOnEscape': false,
                 'open': function () { $(".ui-dialog-titlebar-close").hide(); },
-                'buttons' : [ {
-                    'text' : 'Crosslist',
-                    'click' : submitButton
-                }, {
+                'buttons' : [  {
                     'text' : 'Cancel',
                     'click' : function() {
                         $(this).dialog('destroy').remove();
                         errors = [];
                         updateMsgs();
                     }
+                },{
+                    'text' : 'Submit',
+                    'class': 'Button Button--primary',
+                    'click' : submitButton
+                    
                 } ],
                 'modal' : true,
                 'height' : 'auto',
-                'width' : '80%'
+                'width' : '40%'
             });
             if (!$('#jj_cross_dialog').dialog('isOpen')) {
                 $('#jj_cross_dialog').dialog('open');
@@ -258,7 +260,6 @@
             console.log(e);
         }
     }
-
     function setChild() {
         array = $.map($('input[name="childCourses"]:checked'), function(c){return c.value; });
     }
@@ -346,16 +347,17 @@
                 'autoOpen' : false,
                 'closeOnEscape': false,
                 'open': function () { $(".ui-dialog-titlebar-close").hide(); },
-                'buttons' : [ {
-                    'text' : 'Crosslist Only',
-                    'click' : processDialog
-                }, {
+                'buttons' : [{
                     'text' : 'Cancel',
                     'click' : function() {
                         $(this).dialog('destroy').remove();
                         errors = [];
                         updateMsgs();
                     }
+                },{
+                    'text' : 'Crosslist Only',
+                    'class': 'Button Button--primary',
+                    'click' : processDialog
                 } ],
                 'modal' : true,
                 'height' : 'auto',
@@ -413,16 +415,17 @@
                 'autoOpen' : false,
                 'closeOnEscape': false,
                 'open': function () { $(".ui-dialog-titlebar-close").hide(); },
-                'buttons' : [ {
-                    'text' : 'Update Name',
-                    'click' : updateName
-                }, {
+                'buttons' : [  {
                     'text' : 'Cancel',
                     'click' : function() {
                         $(this).dialog('destroy').remove();
                         errors = [];
                         updateMsgs();
                     }
+                },{
+                    'text' : 'Update Name',
+                    'class': 'Button Button--primary',
+                    'click' : updateName
                 } ],
                 'modal' : true,
                 'height' : 'auto',
@@ -503,4 +506,139 @@
             msg.style.display = 'inline-block';
         }
     }
+    //De-Crosslist Functions
+     function openDialog2() {
+        try {
+            createDialog2();
+            $('#jj_cross_dialog2').dialog({
+                'title' : 'De-Crosslist Courses',
+                'autoOpen' : false,
+                'closeOnEscape': false,
+                'open': function () { $(".ui-dialog-titlebar-close").hide(); },
+                'buttons' : [  {
+                    'text' : 'Cancel',
+                    'click' : function() {
+                        $(this).dialog('destroy').remove();
+                        errors = [];
+                        updateMsgs2();
+                    }
+                },{
+                    'text' : 'De-Crosslist',
+                    'class': 'Button Button--primary',
+                    'click' : getSections
+                } ],
+                'modal' : true,
+                'height' : 'auto',
+                'width' : '40%'
+            });
+            if (!$('#jj_cross_dialog2').dialog('isOpen')) {
+                $('#jj_cross_dialog2').dialog('open');
+            }
+        } catch (e) {
+            //console.log(e);
+              errors.push('Unable to de-crosslist course.');
+                updateMsgs2();
+        }
+    }
+    function createDialog2() {
+        var el = document.querySelector('#jj_cross_dialog2');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'jj_cross_dialog2';
+            //Parent Course selection
+            var el5 = document.createElement('div');
+            el5.classList.add('ic-Form-control');
+            el.appendChild(el5);
+            var label = document.createElement('label');
+            label.htmlFor = 'jj_cross_parentCourse';
+            label.textContent = 'Step 1: Select Bucket Course:';
+            label.classList.add('ic-Label');
+            el5.appendChild(label);
+            var select = document.createElement('select');
+            select.id = 'jj_cross_parentCourse';
+            select.classList.add('ic-Input');
+            el5.appendChild(select);
+            //message flash
+            var msg = document.createElement('div');
+            msg.id = 'jj_cross_msg2';
+            //msg.classList.add('ic-flash-warning');
+            msg.style.display = 'none';
+            el.appendChild(msg);
+            var parent = document.querySelector('body');
+            parent.appendChild(el);
+        }
+        setParent();
+    }
+    function getSections(){
+        var courseSections;
+        parentId = document.getElementById("jj_cross_parentCourse").value;
+            var url = "/api/v1/courses/" + parentId + "/sections?";
+            $.ajax({
+                'async': true,
+                'type': "GET",
+                'global': true,
+                'dataType': 'JSON',
+                'data': JSON.stringify(courseSections),
+                'contentType': "application/json",
+                'url': url,
+                'success': function (courseSections) {
+                     $.each(courseSections, function(index,item){
+                    array = item.id;
+                    var url2 = "/api/v1/sections/" + array + "/crosslist/";
+                    $.ajax({
+                        'cache' : false,
+                        'url' : url2 ,
+                        'type' : 'DELETE',
+
+                    }).done(function() {
+                        closeDialog();
+                    });
+            });
+    }
+            });
+    }
+    function updateMsgs2() {
+        var msg = document.getElementById('jj_cross_msg2');
+        if (!msg) {
+            return;
+        }
+        if (msg.hasChildNodes()) {
+            msg.removeChild(msg.childNodes[0]);
+        }
+        if (typeof errors === 'undefined' || errors.length === 0) {
+            msg.style.display = 'none';
+        } else {
+            var div1 = document.createElement('div');
+            div1.classList.add('ic-flash-error');
+            var div2;
+            div2 = document.createElement('div');
+            div2.classList.add('ic-flash__icon');
+            div2.classList.add('aria-hidden="true"');
+            div1.appendChild(div2);
+            var icon;
+            icon = document.createElement('i');
+            icon.classList.add('icon-warning');
+            div2.appendChild(icon);
+            var ul = document.createElement('ul');
+            for (var i = 0; i < errors.length; i++) {
+                var li;
+                li = document.createElement('li');
+                li.textContent = errors[i];
+                ul.appendChild(li);
+            }
+            div1.appendChild(ul);
+            var button;
+            button = document.createElement('button');
+            button.type = 'button';
+            button.classList.add("Button", "Button--icon-action", "close_link");
+            div1.appendChild(button);
+            icon = document.createElement('i');
+            icon.classList.add('ic-icon-x');
+            icon.classList.add('aria-hidden="true"');
+            button.appendChild(icon);
+            msg.appendChild(div1);
+            msg.style.display = 'inline-block';
+        }
+    }
+})();
 })();
