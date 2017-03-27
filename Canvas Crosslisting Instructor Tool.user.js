@@ -76,8 +76,9 @@
     function createDialog() {
         var el = document.querySelector('#jj_cross_dialog');
         if (!el) {
-            el = document.createElement('div');
+            el = document.createElement('form');
             el.id = 'jj_cross_dialog';
+            el.classList.add('ic-Form-group');
             //Parent Course selection
             var el5 = document.createElement('div');
             el5.classList.add('ic-Form-control');
