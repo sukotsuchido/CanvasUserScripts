@@ -550,9 +550,7 @@
                 $('#jj_cross_dialog2').dialog('open');
             }
         } catch (e) {
-            //console.log(e);
-              errors.push('Unable to de-crosslist course.');
-                updateMsgs2();
+            console.log(e);
         }
     }
     function createDialog2() {
