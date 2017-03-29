@@ -265,6 +265,7 @@
                     
                 } ],
                 'modal' : true,
+                'resizable' : false,
                 'height' : 'auto',
                 'width' : '40%'
             });
@@ -375,6 +376,7 @@
                     'click' : processDialog
                 } ],
                 'modal' : true,
+                'resizable' : false,
                 'height' : 'auto',
                 'width' : '40%'
             });
@@ -443,6 +445,7 @@
                     'click' : updateName
                 } ],
                 'modal' : true,
+                'resizable' : false,
                 'height' : 'auto',
                 'width' : '40%'
             });
@@ -543,6 +546,7 @@
                     'click' : getSections
                 } ],
                 'modal' : true,
+                'resizable' : false,
                 'height' : 'auto',
                 'width' : '40%'
             });
