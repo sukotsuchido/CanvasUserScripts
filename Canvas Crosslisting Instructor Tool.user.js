@@ -15,7 +15,6 @@
     var parentId = [];
     var termId = '';
     var termLabel = '';
-    var filteredCourses = [];
     var courses = {};
     var dedupThings = [];
     var wholeName = '';
@@ -45,8 +44,9 @@
         if (parent) {
             var el = parent.querySelector('#jj_cross');
             if (!el) {
-                el = document.createElement('a');
-                el.classList.add('btn', 'element_toggler');
+                el = document.createElement('button');
+                el.classList.add('Button','element_toggler');
+                el.type = 'button';
                 el.id = 'jj_cross';
                 var icon = document.createElement('i');
                 icon.classList.add('icon-sis-synced');
@@ -59,8 +59,9 @@
             //de-crosslist button
             var el2 = parent.querySelector('#jj_decross');
             if (!el2) {
-                el2 = document.createElement('a');
-                el2.classList.add('btn', 'element_toggler', 'button-sidebar-wide');
+                el2 = document.createElement('button');
+                el2.classList.add('Button', 'element_toggler');
+                el2.type = 'button';
                 el2.id = 'jj_decross';
                 var icon2 = document.createElement('i');
                 icon2.classList.add('icon-sis-not-synced');
@@ -152,7 +153,7 @@
     function getCourses(){
         // Reset global variable errors
         errors= [];
-        var url = "/api/v1/users/self/courses?inlcude[]=term&per_page=75";
+        var url = "/api/v1/users/2748/courses?inlcude[]=term&per_page=75";
         $.ajax({
             'async': true,
             'type': "GET",
@@ -191,14 +192,13 @@
                 toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
             }
         });
-        var blank =''; 
+        var blank ='';
         blank += '<option value="">Please select</option>';
-        $('#jj_cross_parentCourse').append(blank); 
+        $('#jj_cross_parentCourse').append(blank);
         $('#jj_cross_parentCourse').append(toAppend);
     }
     function getChildren(){
         var clear = document.getElementById('checkboxes');
-        var clear2 ='';
         var clear3='';
         if (clear.innerHTML !== null){
             clear.innerHTML = "";
@@ -206,7 +206,6 @@
         parentId = document.getElementById("jj_cross_parentCourse").value;
         var labelAppend = '';
         var inputAppend = '';
-        var check = document.getElementById('checkboxes');
         $.each(dedupThings,function(i,o){
             if (o.enrollment_term_id == termId && o.id != parentId) {
                 labelAppend += '<input type="checkbox" id="'+o.id+'" name="childCourses" value="'+o.id+'">'+'<label class="ic-Label" for="'+o.id+'">'+o.name+'</label>';
@@ -240,8 +239,6 @@
         }).done(function() {
             closeDialog();
         });
-
-        updateMsgs();
     }
     function openDialog() {
         try {
@@ -262,7 +259,7 @@
                     'text' : 'Submit',
                     'class': 'Button Button--primary',
                     'click' : submitButton
-                    
+
                 } ],
                 'modal' : true,
                 'resizable' : false,
@@ -280,8 +277,6 @@
         array = $.map($('input[name="childCourses"]:checked'), function(c){return c.value; });
     }
     function processDialog() {
-
-
         $.each(array, function(index,item){
             var childCourse = item;
             var childSection;
@@ -470,7 +465,7 @@
                 opennocrossDialog();
             }
         }else{
-            errors.push('You must choose a course to crosslist or course name.');
+            errors.push('You must choose a course to crosslist or input a course name.');
             updateMsgs();
         }
     }
@@ -479,6 +474,7 @@
         $('#nocrossDialog').dialog('close');
         $('#nonameDialog').dialog('close');
         $('#jj_cross_dialog').dialog('close');
+        $('#jj_cross_dialog2').dialog('close');
         window.location.reload(true);
     }
     function updateMsgs() {
@@ -525,7 +521,7 @@
         }
     }
     //De-Crosslist Functions
-     function openDialog2() {
+    function openDialog2() {
         try {
             createDialog2();
             $('#jj_cross_dialog2').dialog({
@@ -589,17 +585,17 @@
     function getSections(){
         var courseSections;
         parentId = document.getElementById("jj_cross_parentCourse").value;
-            var url = "/api/v1/courses/" + parentId + "/sections?";
-            $.ajax({
-                'async': true,
-                'type': "GET",
-                'global': true,
-                'dataType': 'JSON',
-                'data': JSON.stringify(courseSections),
-                'contentType': "application/json",
-                'url': url,
-                'success': function (courseSections) {
-                     $.each(courseSections, function(index,item){
+        var url = "/api/v1/courses/" + parentId + "/sections?";
+        $.ajax({
+            'async': true,
+            'type': "GET",
+            'global': true,
+            'dataType': 'JSON',
+            'data': JSON.stringify(courseSections),
+            'contentType': "application/json",
+            'url': url,
+            'success': function (courseSections) {
+                $.each(courseSections, function(index,item){
                     array = item.id;
                     var url2 = "/api/v1/sections/" + array + "/crosslist/";
                     $.ajax({
@@ -610,9 +606,9 @@
                     }).done(function() {
                         closeDialog();
                     });
-            });
-    }
-            });
+                });
+            }
+        });
     }
     function updateMsgs2() {
         var msg = document.getElementById('jj_cross_msg2');
