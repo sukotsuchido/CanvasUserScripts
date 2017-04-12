@@ -9,7 +9,7 @@
 // ==/UserScript==
 (function() {
     'use strict';
-    var assocRegex = new RegExp('^/courses');
+    var assocRegex = new RegExp('^/courses$');
     var acc = window.location.pathname;
     var errors = [];
     var parentId = [];
