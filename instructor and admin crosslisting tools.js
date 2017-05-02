@@ -665,6 +665,11 @@
         }
     }
 
+    function keyEnter() {
+        if (event.keyCode == 13) {
+            document.getElementById('btnSearch').click();
+        }  
+    }
     function adminDialog() {
         var el = document.querySelector('#jj_admin_dialog');
         if (!el) {
@@ -677,18 +682,25 @@
             label.textContent = 'Search For Teacher:';
             label.classList.add('ic-Label');
             el.appendChild(label);
-            var input = document.createElement('input');
-            input.id = 'jj_cross_user';
-            input.classList.add('ic-Input');
-            input.type = 'text';
-            input.placeholder = 'Enter Teacher Name';
-            el.appendChild(input);
+            var el11 = document.createElement('div');
+            el11.style =("overflow: hidden","margin: 0 0 10px 0");
+            el.appendChild(el11);
             var searchButton = document.createElement('button');
             searchButton.type = 'button';
+            searchButton.id = 'btnSearch';
+            searchButton.style = 'float: right';
             searchButton.textContent = 'Search';
             searchButton.onclick = searchUser;
             searchButton.classList.add('Button');
-            el.appendChild(searchButton);
+            el11.appendChild(searchButton);
+            var input = document.createElement('input');
+            input.classList.add('ic-Input');
+            input.style = 'width: 80%';
+            input.id = 'jj_cross_user';
+            input.type = 'text';
+            input.onkeyup = keyEnter;
+            input.placeholder = 'Enter Teacher Name';
+            el11.appendChild(input);
             //teacher dropdown
             label = document.createElement('label');
             label.htmlFor = 'jj_cross_Results';
