@@ -670,37 +670,36 @@
             document.getElementById('btnSearch').click();
         }  
     }
-    function adminDialog() {
+     function adminDialog() {
         var el = document.querySelector('#jj_admin_dialog');
         if (!el) {
             //User Search
             el = document.createElement('form');
             el.id = 'jj_admin_dialog';
-            el.classList.add('ic-Form-group');
+            el.classList.add("ic-Form-control","account_search_form");
             var label = document.createElement('label');
             label.htmlFor = 'jj_cross_user';
             label.textContent = 'Search For Teacher:';
             label.classList.add('ic-Label');
             el.appendChild(label);
             var el11 = document.createElement('div');
-            el11.style =("overflow: hidden","margin: 0 0 10px 0");
+            el11.style =('margin: 0 0 10px 0');
+            el11.classList.add('ic-Input-group');
             el.appendChild(el11);
-            var searchButton = document.createElement('button');
-            searchButton.type = 'button';
-            searchButton.id = 'btnSearch';
-            searchButton.style = 'float: right';
-            searchButton.textContent = 'Search';
-            searchButton.onclick = searchUser;
-            searchButton.classList.add('Button');
-            el11.appendChild(searchButton);
             var input = document.createElement('input');
             input.classList.add('ic-Input');
-            input.style = 'width: 80%';
             input.id = 'jj_cross_user';
             input.type = 'text';
             input.onkeyup = keyEnter;
             input.placeholder = 'Enter Teacher Name';
             el11.appendChild(input);
+            var searchButton = document.createElement('button');
+            searchButton.type = 'button';
+            searchButton.id = 'btnSearch';
+            searchButton.textContent = 'Search';
+            searchButton.onclick = searchUser;
+            searchButton.classList.add('Button');
+            el11.appendChild(searchButton);
             //teacher dropdown
             label = document.createElement('label');
             label.htmlFor = 'jj_cross_Results';
