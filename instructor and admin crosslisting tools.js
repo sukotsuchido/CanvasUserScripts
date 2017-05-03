@@ -237,7 +237,7 @@
                 'title' : 'Crosslist Courses',
                 'autoOpen' : false,
                 'closeOnEscape': false,
-                'open': function () { $(".ui-dialog-titlebar-close").hide(); },
+                'open': function () { $(".ui-dialog-titlebar-close").hide(); $(".ui-dialog").css("top", "10px");},
                 'buttons' : [  {
                     'text' : 'Cancel',
                     'click' : function() {
@@ -918,7 +918,7 @@
                 'title' : 'Admin Crosslist Tool',
                 'autoOpen' : false,
                 'closeOnEscape': false,
-                'open': function () { $(".ui-dialog-titlebar-close").hide(); },
+                'open': function () { $(".ui-dialog-titlebar-close").hide(); $(".ui-dialog").css("top", "10px");},
                 'buttons' : [  {
                     'text' : 'Cancel',
                     'click' : function() {
