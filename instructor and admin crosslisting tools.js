@@ -464,8 +464,8 @@
         $('#nonameDialog').dialog('close');
         $('#jj_cross_dialog').dialog('close');
         $('#jj_cross_dialog2').dialog('close');
-        //$('#successdialog').dialog('close');
         window.location.reload(true);
+        open_success_dialog();
     }
 
     function updateMsgs() {
@@ -511,6 +511,56 @@
             msg.style.display = 'inline-block';
         }
     }
+    function successDialog(){
+        var el = document.querySelector('#success_dialog');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'success_dialog';
+            //el.style.display = 'inline-block';
+            var div1 = document.createElement('div');
+            div1.classList.add('ic-flash-success');
+            el.appendChild(div1);
+            var div2 = document.createElement('div');
+            div2.classList.add('ic-flash__icon');
+            div2.classList.add('aria-hidden="true"');
+            div1.appendChild(div2);
+            var icon = document.createElement('i');
+            icon.classList.add('icon-check');
+            div2.appendChild(icon);
+            var msg = document.createTextNode("The action completed successfully!");
+            div1.appendChild(msg);
+            var button = document.createElement('button');
+            button.type = 'button';
+            button.classList.add("Button", "Button--icon-action", "close_link");
+            el.appendChild(button);
+            icon = document.createElement('i');
+            icon.classList.add('ic-icon-x');
+            icon.classList.add('aria-hidden="true"');
+            button.appendChild(icon);
+            var parent = document.querySelector('body');
+            parent.appendChild(el);
+
+        }
+    }
+    function open_success_dialog(){
+        try {
+            successDialog();
+            $('#success_dialog').dialog({
+                'autoOpen' : false,
+                'closeOnEscape': false,
+                'open': function () { $(".ui-dialog-titlebar").hide(); $(".ui-widget-content").css("background", "rgba(255, 255, 255, 0)"); $(".ui-dialog.ui-widget-content").css("box-shadow", "none");},
+                'modal' : true,
+                'resizable' : false,
+                'height' : 'auto',
+                'width' : '40%',
+            });
+            if (!$('#success_dialog').dialog('isOpen')) {
+                $('#success_dialog').dialog('open');
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }   
     //De-Crosslist Functions
     function openDialog2() {
         try {
