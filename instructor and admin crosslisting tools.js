@@ -834,7 +834,7 @@
         var el = document.getElementById('jj_cross_user');
         if (el.value && el.value.trim() !== '') {
             userName = el.value;
-            var url = "/api/v1" + acc + "/users?search_term=" + userName + "&include[]=enrollments";
+            var url = "/api/v1" + acc + "/users?search_term=" + userName + "&per_page=100";
             var userInfo;
             var x = document.getElementById("jj_cross_user");
             if (x.className === "ic-Input") {
