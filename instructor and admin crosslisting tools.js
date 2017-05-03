@@ -643,7 +643,6 @@
                         'cache' : false,
                         'url' : url2 ,
                         'type' : 'DELETE',
-
                     }).done(function() {
                         closeDialog();
                     });
@@ -714,7 +713,6 @@
             }
         }
     }
-
     function keyEnter() {
         if (event.keyCode == 13) {
             document.getElementById('btnSearch').click();
@@ -828,7 +826,6 @@
             parent.appendChild(el);
         }
     }
-
     function searchUser() {
         // Reset global variable errors
         errors = [];
@@ -839,6 +836,10 @@
             userName = el.value;
             var url = "/api/v1" + acc + "/users?search_term=" + userName + "&include[]=enrollments";
             var userInfo;
+            var x = document.getElementById("jj_cross_user");
+            if (x.className === "ic-Input") {
+                x.style.background = "url(https://imagizer.imageshack.us/a/img922/9776/IinEAt.gif) no-repeat right center";
+            }
             $.ajax({
                 'async': true,
                 'type': "GET",
@@ -848,7 +849,6 @@
                 'contentType': "application/json",
                 'url': url,
                 'success': function(data){
-                    console.log(data);
                     if(data.length > 0){
                         var toAppend = '';
                         var blank = ''; 
@@ -863,14 +863,16 @@
                         blank += '<option value="">Please select</option>';
                         $('#jj_cross_chooseuser').append(blank);
                         $('#jj_cross_chooseuser').append(toAppend);
+                        var x = document.getElementById("jj_cross_user");		
+                        if (x.className === "ic-Input") {
+                            x.style.background = "#fff";
+                        }
                     }else{
                         errors.push('No user found');
                         updateMsgs();
                     }
                 }
-
             });
-
         }else {
             errors.push('You must type in a name.');
         }
@@ -902,7 +904,6 @@
                     if (o.enrollment_term_id == termId) {
                         toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
                     }
-
                 });
                 blank += '<option value="">Please select</option>';
                 $('#jj_cross_parentCourse').append(blank);
@@ -929,7 +930,6 @@
                     'text' : 'Submit',
                     'class': 'Button Button--primary',
                     'click' : submitButton
-
                 } ],
                 'modal' : true,
                 'resizable' : false,
@@ -943,5 +943,4 @@
             console.log(e);
         }
     }
-
 })();
