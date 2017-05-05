@@ -6,35 +6,20 @@
     var errors = [];
     var parentId = [];
     var termId = '';
-    var termLabel = '';
     var courses = {};
     var dedupThings = [];
     var wholeName = '';
     var array =[];
     var user = '';
-
-    if (assocRegex.test(window.location.pathname)) {
+    /* role setup */
+    var leng = ENV.current_user_roles.length - 1;
+    var role = ENV.current_user_roles[leng];
+    if ((assocRegex.test(window.location.pathname)) && (role == "teacher" || role == "admin")) {
         getCourses();
     }
-    if (assocRegex2.test(window.location.pathname)) {
+    if ((assocRegex2.test(window.location.pathname)) && role === "admin") {
         add_buttonAdmin();
     }
-
-    function getCsrfToken() {
-        var csrfRegex = new RegExp('^_csrf_token=(.*)$');
-        var csrf;
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            var match = csrfRegex.exec(cookie);
-            if (match) {
-                csrf = decodeURIComponent(match[1]);
-                break;
-            }
-        }
-        return csrf;
-    }
-
     function add_button() {
         var parent = document.querySelector('div.ic-Action-header__Secondary');
         if (parent) {
@@ -69,7 +54,6 @@
             }
         }
     }
-
     function createDialog() {
         var el = document.querySelector('#jj_cross_dialog');
         if (!el) {
@@ -156,12 +140,7 @@
             'url': url,
             'success': function(courses){
                 dedupThings = Array.from(courses.reduce((m, t) => m.set(t.id, t), new Map()).values());
-                $.each(dedupThings, function(i, o){
-                    if (o.enrollments[0].type == "teacher"){
-                        add_button();
-                    }
-                });
-
+                add_button();
             }
         });
     }
@@ -210,7 +189,6 @@
         });
         $('#checkboxes').append(inputAppend);
     }
-
     function courseName(){
         var newName= [];
         newName = $.map($('input[id="course_name"]'), function(i){return i.value; });
@@ -339,7 +317,6 @@
             parent.appendChild(el);
         }
     }
-
     function opennonameDialog(){
         try {
             nonameDialog();
@@ -467,7 +444,6 @@
         window.location.reload(true);
         open_success_dialog();
     }
-
     function updateMsgs() {
         var msg = document.getElementById('jj_cross_msg');
         if (!msg) {
@@ -516,7 +492,7 @@
         if (!el) {
             el = document.createElement('div');
             el.id = 'success_dialog';
-            //el.style.display = 'inline-block';
+           
             var div1 = document.createElement('div');
             div1.classList.add('ic-flash-success');
             el.appendChild(div1);
@@ -539,7 +515,6 @@
             button.appendChild(icon);
             var parent = document.querySelector('body');
             parent.appendChild(el);
-
         }
     }
     function open_success_dialog(){
@@ -560,7 +535,7 @@
         } catch (e) {
             console.log(e);
         }
-    }   
+    }
     //De-Crosslist Functions
     function openDialog2() {
         try {
@@ -569,7 +544,7 @@
                 'title' : 'De-Crosslist Courses',
                 'autoOpen' : false,
                 'closeOnEscape': false,
-                'open': function () { $(".ui-dialog-titlebar-close").hide(); },
+                'open': function () { $(".ui-dialog-titlebar-close").hide();},
                 'buttons' : [  {
                     'text' : 'Cancel',
                     'click' : function() {
@@ -643,6 +618,7 @@
                         'cache' : false,
                         'url' : url2 ,
                         'type' : 'DELETE',
+
                     }).done(function() {
                         closeDialog();
                     });
@@ -716,9 +692,9 @@
     function keyEnter() {
         if (event.keyCode == 13) {
             document.getElementById('btnSearch').click();
-        }  
+        }
     }
-     function adminDialog() {
+    function adminDialog() {
         var el = document.querySelector('#jj_admin_dialog');
         if (!el) {
             //User Search
@@ -830,7 +806,6 @@
         // Reset global variable errors
         errors = [];
         var userName;
-        var userID;
         var el = document.getElementById('jj_cross_user');
         if (el.value && el.value.trim() !== '') {
             userName = el.value;
@@ -856,7 +831,7 @@
                         select.options.length = 0; // clear out existing items
                         $.each(data,function(i,o){
                             var n = o.name;
-                            if (n.toUpperCase() !== n){
+                            if (n.toUpperCase() !== n && role){
                                 toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
                             }
                         });
@@ -895,7 +870,6 @@
                 dedupThings = Array.from(courses.reduce((m, t) => m.set(t.id, t), new Map()).values());
                 var toAppend = '';
                 var blank ='';
-                var clear = [];
                 var select2 = document.getElementById('jj_cross_parentCourse');
                 select2.options.length = 0; // clear out existing items
                 var getMax = getTerm(dedupThings, "enrollment_term_id");
@@ -934,7 +908,7 @@
                 'modal' : true,
                 'resizable' : false,
                 'height' : 'auto',
-                'width' : '40%'
+                'width' : '40%',
             });
             if (!$('#jj_admin_dialog').dialog('isOpen')) {
                 $('#jj_admin_dialog').dialog('open');
