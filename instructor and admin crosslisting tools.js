@@ -723,7 +723,7 @@
             document.getElementById('btnSearch').click();
         }
     }
-    function adminDialog() {
+     function adminDialog() {
         var el = document.querySelector('#jj_admin_dialog');
         if (!el) {
             //User Search
@@ -782,6 +782,8 @@
             el5.appendChild(select);
             //childcourse checkboxes
             var el6 = document.createElement('fieldset');
+            el6.id = 'child_list';
+            el6.style.display = 'none';
             el6.classList.add("ic-Fieldset", "ic-Fieldset--radio-checkbox");
             el.appendChild(el6);
             var el7 = document.createElement('legend');
@@ -794,6 +796,8 @@
             el6.appendChild(el8);
             //Course Name
             var el9 = document.createElement('div');
+            el9.id = 'course_div';
+            el9.style.display = 'none';
             el9.classList.add('ic-Form-control');
             el.appendChild(el9);
             label = document.createElement('label');
@@ -809,6 +813,8 @@
             el9.appendChild(input);
             //Course Name Examples
             var el10 = document.createElement('p');
+            el10.id = 'examples';
+            el10.style.display = 'none';
             el10.classList = 'text-info';
             el.appendChild(el10);
             var ol = document.createElement('ol');
@@ -820,6 +826,9 @@
             ol.appendChild(li);
             li = document.createElement('li');
             li.textContent = 'BJH Spanish 1 PreAP G.Moreno';
+            ol.appendChild(li);
+            li = document.createElement('li');
+            li.textContent = 'Elementary: KDE 4 Math G.Rorey';
             ol.appendChild(li);
             //message flash
             var msg = document.createElement('div');
