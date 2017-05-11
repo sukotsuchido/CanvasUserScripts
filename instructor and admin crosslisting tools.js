@@ -1,14 +1,3 @@
-// ==UserScript==
-// @name         Canvas Crosslisting Instructor Tool TEST
-// @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      1.4
-// @description  A Canvas UserScript to facilitate crosslisting and de-crosslisting of courses.
-// @author       Chad Scott (ChadScott@katyisd.org)
-// @include     https://*.instructure.com/courses
-// @include     https://*instructure.com/accounts/*
-// @grant        none
-// ==/UserScript==
-
 (function() {
 
     'use strict';
