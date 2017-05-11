@@ -27,7 +27,7 @@
     if ((assocRegex.test(window.location.pathname)) && (role == "teacher" || role == "admin" || role == "root_admin")) {
         getCourses();
     }
-    if ((assocRegex2.test(window.location.pathname)) && (role === "admin" || role == "root_admin")) {
+    if ((assocRegex2.test(window.location.pathname)) && (role == "admin" || role == "root_admin")) {
         add_buttonAdmin();
     }
     function add_button() {
