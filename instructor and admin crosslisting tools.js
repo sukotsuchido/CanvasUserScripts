@@ -24,7 +24,6 @@
     /* role setup */
     var leng = ENV.current_user_roles.length - 1;
     var role = ENV.current_user_roles[leng];
-console.log(role);
     if ((assocRegex.test(window.location.pathname)) && (role == "teacher" || role == "admin" || role == "root_admin")) {
         getCourses();
     }
