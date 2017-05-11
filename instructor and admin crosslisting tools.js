@@ -1,17 +1,17 @@
-/ ==UserScript==
+// ==UserScript==
 // @name         Canvas Crosslisting Instructor Tool TEST
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
 // @version      1.4
 // @description  A Canvas UserScript to facilitate crosslisting and de-crosslisting of courses.
 // @author       Chad Scott (ChadScott@katyisd.org)
-// @include     https://[^.\s]+.instructure.com/courses/
-// @include     https://[^.\s]+.instructure.com/accounts/*
+// @include     https://*.instructure.com/courses
+// @include     https://*.instructure.com/accounts/*
 // @grant        none
 // ==/UserScript==
 (function() {
     'use strict';
-    var assocRegex = new RegExp('[^.\s]+/courses$');
-    var assocRegex2 = new RegExp('[^.\s]+/accounts/([0-9]+)$');
+    var assocRegex = new RegExp('^/courses$');
+    var assocRegex2 = new RegExp('^/accounts/([0-9]+)$');
     var acc = window.location.pathname;
     var errors = [];
     var parentId = [];
@@ -24,11 +24,11 @@
     /* role setup */
     var leng = ENV.current_user_roles.length - 1;
     var role = ENV.current_user_roles[leng];
-
-    if ((assocRegex.test(window.location.pathname)) && (role == "teacher" || role == "admin")) {
+console.log(role);
+    if ((assocRegex.test(window.location.pathname)) && (role == "teacher" || role == "admin" || role == "root_admin")) {
         getCourses();
     }
-    if ((assocRegex2.test(window.location.pathname)) && role === "admin") {
+    if ((assocRegex2.test(window.location.pathname)) && (role === "admin" || role == "root_admin")) {
         add_buttonAdmin();
     }
     function add_button() {
