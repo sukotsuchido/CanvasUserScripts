@@ -284,7 +284,8 @@
                 'contentType': "application/json",
                 'url': url,
                 'success': function (data) {
-                    childSection = data[0].id;
+                    $.each(data, function(i,o){
+                        childSection = o.id;
                     var url2 = "/api/v1/sections/" + childSection + "/crosslist/" + parentId +"?";
                     $.ajax({
                         'cache' : false,
@@ -294,9 +295,10 @@
                         setFavorite();
                         closeDialog();
                     });
-                }
-            });
+                });
+            }
         });
+    });
     }
     function setFavorite (){
         var url = "/api/v1/users/self/favorites/courses/" + parentId;
