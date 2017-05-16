@@ -565,6 +565,22 @@
         }
     }
     //De-Crosslist Functions
+     function setParentDecross(){
+        var toAppend = '';
+        var select = document.getElementById('jj_cross_parentCourse');
+        select.options.length = 0; // clear out existing items
+        var getMax = getTerm(dedupThings, "enrollment_term_id");
+        termId = getMax.enrollment_term_id;
+        $.each(dedupThings, function(i, o){
+            if (o.enrollment_term_id == termId && o.sections.length > 1) {
+                toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
+            }
+        });
+        var blank ='';
+        blank += '<option value="">Please select</option>';
+        $('#jj_cross_parentCourse').append(blank);
+        $('#jj_cross_parentCourse').append(toAppend);
+    }
     function openDialog2() {
         try {
             createDialog2();
@@ -624,7 +640,7 @@
             var parent = document.querySelector('body');
             parent.appendChild(el);
         }
-        setParent();
+        setParentDecross();
     }
     function getSections(){
         var courseSections;
