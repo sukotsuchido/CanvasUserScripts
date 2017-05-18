@@ -48,7 +48,7 @@
                 parent.appendChild(el);
             }
             //de-crosslist button
-            var el2 = parent.querySelector('#jj_decross');
+            /*var el2 = parent.querySelector('#jj_decross');
             if (!el2) {
                 el2 = document.createElement('button');
                 el2.classList.add('Button', 'element_toggler');
@@ -61,7 +61,7 @@
                 el2.appendChild(txt2);
                 el2.addEventListener('click', openDialog2);
                 parent.appendChild(el2);
-            }
+            }*/
         }
     }
     function createDialog() {
