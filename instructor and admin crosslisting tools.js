@@ -57,7 +57,7 @@
             el.classList.add('ic-Form-group');
             //Parent Course selection
             var help = document.createElement('div');
-            help.innerHTML = '<div class="grid-row"><div class="col-lg-8"><div class="content-box">Directions: Complete for each course Prep.</div></div><div class="col-lg-4"><div id="action_helper" style="cursor: pointer" class="content-box"><div class="ic-image-text-combo"><i class="icon-info"></i><div class="ic-image-text-combo__text">POSSIBLE ACTIONS</div></div></div></div></div>';
+            help.innerHTML = '<div class="grid-row middle-xs"><div class="col-lg-8"><div class="content-box">Directions: Complete for each step to crosslist and rename your courses.<br/>Click OPTIONS for more information about Crosslisting.</div></div><div class="col-lg-4"><div id="action_helper" style="cursor: pointer" class="content-box"><div class="ic-image-text-combo Button" type="button"><i class="icon-info"></i><div class="ic-image-text-combo__text">Options</div></div></div></div></div>';
             help.classList.add('ic-Label');
             el.appendChild(help);
             var el5 = document.createElement('div');
@@ -65,7 +65,7 @@
             el.appendChild(el5);
             var label = document.createElement('label');
             label.htmlFor = 'jj_cross_parentCourse';
-            label.innerHTML = '<a title="Bucket Course:\nThe main course that all other classes will join.">Step 1: Select Bucket Course</a>';
+            label.innerHTML = '<a title="Bucket Course:\nThe main course that all other classes will join.">Step 1: Select Bucket Course</a>  (Hover over step for more help)';
             label.classList.add('ic-Label');
             el5.appendChild(label);
             var select = document.createElement('select');
@@ -81,7 +81,7 @@
             el.appendChild(el6);
             var el7 = document.createElement('legend');
             el7.classList.add('ic-Legend');
-            el7.innerHTML = '<a title="Only choose courses that need the same course materials.">Step 2: Choose Courses to Crosslist Into Bucket Course</a>'; 
+            el7.innerHTML = '<a title="Only choose courses that need the same course materials.">Step 2: Choose Courses to Crosslist Into Bucket Course</a>    (Hover over step for more help)'; 
             el6.appendChild(el7);
             var el8 = document.createElement('div');
             el8.id = 'checkboxes';
@@ -95,7 +95,7 @@
             el.appendChild(el9);
             label = document.createElement('label');
             label.htmlFor = 'course_name';
-            label.innerHTML = '<a title="Naming Convention: Campus Initials Course Name Teacher Name (First Initial.Last Name)\n\nHigh School: Include Semester A or B after Course Name."> Step 3: Set Course Name</a>'; 
+            label.innerHTML = '<a title="Naming Convention: Campus Initials Course Name Teacher Name (First Initial.Last Name)\n\nHigh School: Include Semester A or B after Course Name."> Step 3: Set Course Name</a>    (Hover over step for more help)'; 
             label.classList.add('ic-Label');
             el9.appendChild(label);
             var input = document.createElement('input');
