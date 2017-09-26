@@ -21,7 +21,7 @@
     var wholeName = '';
     var array =[];
     var user = '';
-    /* role setup */
+    /* role setup: Change the roles you want to have access to the crosslisting features. assocRegex is for the button on the all courses page and assocRegex2 is for the admin page. */
     var leng = ENV.current_user_roles.length - 1;
     var role = ENV.current_user_roles[leng];
     if ((assocRegex.test(window.location.pathname)) && (role == "teacher" || role == "admin" || role == "root_admin")) {
@@ -30,6 +30,8 @@
     if ((assocRegex2.test(window.location.pathname)) && (role === "admin" || role == "root_admin")) {
         add_buttonAdmin();
     }
+    
+    /* This adds the crosslist button to the all courses page and runs the function openDialog when clicked. */
     function add_button() {
         var parent = document.querySelector('div.ic-Action-header__Secondary');
         if (parent) {
@@ -49,7 +51,9 @@
             }
         }
     }
-    function createDialog() {
+    /* This function creates the main popup window users interact with the crosslist their courses. 
+    I followed the Canvas Style Guide as much as possible to the CSS already available to create the form elements. */
+        function createDialog() {
         var el = document.querySelector('#jj_cross_dialog');
         if (!el) {
             el = document.createElement('form');
@@ -134,10 +138,13 @@
             parent.appendChild(el);
         }
         setParent();
+            /* opens the help dialog window */
         document.getElementById("action_helper").addEventListener("click", function(){
             openHelp();
         });
     }
+    
+    /* Help dialog window, explains the steps of how to crosslist */
     function createhelpDialog(){
         var el = document.querySelector('#help_dialog');
         if (!el) {
@@ -155,6 +162,8 @@
             parent.appendChild(el);
         }
     }
+    
+    /* This function creates the modal window for the help dialog, I have hidden the titlebar close button and disabled the ability to esc close also. */
     function openHelp() {
         try {
             createhelpDialog();
@@ -181,6 +190,8 @@
             console.log(e);
         }
     }
+    
+    /* This function sends an api request to get the current users course list. */
     function getCourses(){
         // Reset global variable errors
         errors= [];
@@ -199,6 +210,7 @@
             }
         });
     }
+    /* This function sorts and returns only the most recent term id number. This prevents users from crosslisting into manually created courses. */
     function getTerm(dedupThings, prop) {
         var max;
         for (var i=0 ; i<dedupThings.length ; i++) {
@@ -207,6 +219,8 @@
         }
         return max;
     }
+    
+    /* This function takes the return from getTerm and then filters the courses for only that term id and sets the courses in the dropdown. */ 
     function setParent(){
         var toAppend = '';
         var select = document.getElementById('jj_cross_parentCourse');
@@ -223,6 +237,9 @@
         $('#jj_cross_parentCourse').append(blank);
         $('#jj_cross_parentCourse').append(toAppend);
     }
+    
+    /* This function reveals the rest of the form after the parent course is selected. It adds the remaining courses not chosen to be the
+    parent course as check boxes.*/
     function getChildren(){
         var show = document.getElementById('child_list');
         show.style.visibility = 'visible';
@@ -250,6 +267,7 @@
         });
         $('#checkboxes').append(inputAppend);
     }
+    /* Users are able to change the course name. This sets the text input to wholeName.*/
     function courseName(){
         var newName= [];
         newName = $.map($('input[id="course_name"]'), function(i){return i.value; });
@@ -259,6 +277,8 @@
             }
         });
     }
+    
+    /* This functions sends an API command to change the name of the parent course.*/
     function updateName(){
         var url = "/api/v1/courses/" + parentId + "?course[name]=" + wholeName;
         $.ajax({
@@ -269,6 +289,8 @@
             closeDialog();
         });
     }
+    
+    /* This function creates the modal window for the form dialog box */
     function openDialog() {
         try {
             createDialog();
@@ -302,9 +324,13 @@
             console.log(e);
         }
     }
+    
+    /* this function stores the courses checked in step 2 to the array variable */
     function setChild() {
         array = $.map($('input[name="childCourses"]:checked'), function(c){return c.value; });
     }
+    /* This function sends an API command to crosslist the courses stored in the array variable with the parent course.
+    When it's done, it will execute the function to set the course to the users dashboard and then close the window.*/
     function processDialog() {
         $.each(array, function(index,item){
             var childCourse = item;
@@ -335,6 +361,8 @@
             });
         });
     }
+    
+    /* Sets the course to the user's dashboard */
     function setFavorite (){
         var url = "/api/v1/users/self/favorites/courses/" + parentId;
         $.ajax({
@@ -343,6 +371,9 @@
             'type' : 'POST',
         });
     }
+    
+    /* If the user omits step 3, a dialog windows pops up verifying if the user doesn't want to rename the course.
+    The confirmation button says crosslist only. If the user does want to rename, they can hit close and rename it in step 3. */
     function nonameDialog(){
         var el = document.querySelector('#nonamedialog');
         if (!el) {
@@ -380,6 +411,7 @@
             parent.appendChild(el);
         }
     }
+    /* This creates the modal window for the noname dialog box */
     function opennonameDialog(){
         try {
             nonameDialog();
@@ -412,6 +444,8 @@
             console.log(e);
         }
     }
+    /* If the user omits step 2, a dialog windows pops up verifying if the user doesn't want to crosslist any courses.
+    The confirmation button says rename only. If the user does want to crosslist, they can hit close and choose courses to crosslist in step 2. */
     function nocrossDialog(){
         var el = document.querySelector('#nocrossdialog');
         if (!el) {
@@ -449,6 +483,7 @@
             parent.appendChild(el);
         }
     }
+    /* Creates the modal window for the nocross dialog box */
     function opennocrossDialog(){
         try {
             nocrossDialog();
@@ -481,6 +516,8 @@
             console.log(e);
         }
     }
+    /* This function processes the request of the main crosslist dialog window. It executes the appropriate functions based on steps completed.
+    If step 2 and step 3 are skipped, it throws an error stating to complete step 2 and or step 3. */
     function submitButton(){
         errors = [];
         courseName();
@@ -499,6 +536,7 @@
             updateMsgs();
         }
     }
+    /* This function closes all dialog windows and launches a success dialog */
     function closeDialog(){
         $('#nocrossDialog').dialog('close');
         $('#nonameDialog').dialog('close');
@@ -507,6 +545,7 @@
         window.location.reload(true);
         open_success_dialog();
     }
+    /* This creates error messages at the bottom of the crosslist dialog window */
     function updateMsgs() {
         var msg = document.getElementById('jj_cross_msg');
         if (!msg) {
@@ -550,6 +589,7 @@
             msg.style.display = 'inline-block';
         }
     }
+    /* This creates the success dialog window */
     function successDialog(){
         var el = document.querySelector('#success_dialog');
         if (!el) {
@@ -579,6 +619,8 @@
             parent.appendChild(el);
         }
     }
+    
+    /* This creates the modal window for the success dialog and it closes with the page refresh in the closeDialog function */
     function open_success_dialog(){
         try {
             successDialog();
@@ -598,6 +640,7 @@
             console.log(e);
         }
     }
+    /* You can remove the following if an admin panel is not needed. I'll come add comments to this section soon! */
     //Admin De-Crosslist
     function searchUser() {
         // Reset global variable errors
@@ -1066,4 +1109,5 @@
             console.log(e);
         }
     }
+    /* Remove to here if the admin panel isn't needed */
 })();
