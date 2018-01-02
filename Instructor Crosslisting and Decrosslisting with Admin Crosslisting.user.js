@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Canvas Crosslisting Instructor Tool TEST
+// @name         Canvas Crosslisting Instructor Tool
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
 // @version      1.4
 // @description  A Canvas UserScript to facilitate crosslisting and de-crosslisting of courses.
@@ -22,14 +22,12 @@
     var array =[];
     var user = '';
     /* role setup */
-    var leng = ENV.current_user_roles.length - 1;
-    var role = ENV.current_user_roles[leng];
-    if ((assocRegex.test(window.location.pathname)) && (role == "teacher" || role == "admin" || role == "root_admin")) {
-        getCourses();
-    }
-    if ((assocRegex2.test(window.location.pathname)) && (role == "admin" || role == "root_admin")) {
-        add_buttonAdmin();
-    }
+  if(ENV.current_user_roles.includes('admin','teacher','root_admin')) {
+      getCourses();
+  }
+      if(ENV.current_user_roles.includes('admin','root_admin')) {
+      add_buttonAdmin();
+  }
     function add_button() {
         var parent = document.querySelector('div.ic-Action-header__Secondary');
         if (parent) {
