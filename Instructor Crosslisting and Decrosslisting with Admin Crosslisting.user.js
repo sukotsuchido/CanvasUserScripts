@@ -22,10 +22,10 @@
     var array =[];
     var user = '';
     /* role setup */
-  if(ENV.current_user_roles.includes('admin','teacher','root_admin')) {
+   if(ENV.current_user_roles.includes("admin" || "teacher" || "root_admin")) {
       getCourses();
   }
-      if(ENV.current_user_roles.includes('admin','root_admin')) {
+      if(ENV.current_user_roles.includes("admin" || "root_admin")) {
       add_buttonAdmin();
   }
     function add_button() {
