@@ -22,10 +22,10 @@
     var array =[];
     var user = '';
     /* role setup: Change the roles you want to have access to the crosslisting features. assocRegex is for the button on the all courses page and assocRegex2 is for the admin page. */
-    if(ENV.current_user_roles.some('admin','teacher','root_admin')) {
+    if(ENV.current_user_roles.includes("admin" || "teacher" || "root_admin")) {
       getCourses();
   }
-      if(ENV.current_user_roles.some('admin','root_admin')) {
+      if(ENV.current_user_roles.includes("admin" || "root_admin")) {
       add_buttonAdmin();
   }
     
