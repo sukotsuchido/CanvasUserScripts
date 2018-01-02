@@ -22,14 +22,12 @@
     var array =[];
     var user = '';
     /* role setup: Change the roles you want to have access to the crosslisting features. assocRegex is for the button on the all courses page and assocRegex2 is for the admin page. */
-    var leng = ENV.current_user_roles.length - 1;
-    var role = ENV.current_user_roles[leng];
-    if ((assocRegex.test(window.location.pathname)) && (role == "teacher" || role == "admin" || role == "root_admin")) {
-        getCourses();
-    }
-    if ((assocRegex2.test(window.location.pathname)) && (role === "admin" || role == "root_admin")) {
-        add_buttonAdmin();
-    }
+    if(ENV.current_user_roles.includes('admin','teacher','root_admin')) {
+      getCourses();
+  }
+      if(ENV.current_user_roles.includes('admin','root_admin')) {
+      add_buttonAdmin();
+  }
     
     /* This adds the crosslist button to the all courses page and runs the function openDialog when clicked. */
     function add_button() {
