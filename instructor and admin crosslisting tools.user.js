@@ -27,10 +27,10 @@
     var admincxbuttonRoles = ["admin", "root_admin"];
     var test1 = cxbuttonRoles.some(el => roles.includes(el));
     var test2 = admincxbuttonRoles.some(el => roles.includes(el));
-    if( test1 == 'True'){
+    if( (test1 === true) && (assocRegex.test(window.location.pathname))){
         getCourses();
     }
-    if( test2 == 'True'){
+    if( (test2 === true) && (assocRegex2.test(window.location.pathname))){
         add_buttonAdmin();
     }
     
