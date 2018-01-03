@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Canvas Course Event Manager
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      0.1
+// @version      0.5
 // @description  A Canvas UserScript to manage course events
 // @author       Chad Scott (ChadScott@katyisd.org)
-// @include     https://*.instructure.com/calendar*
+// @include     https://*.instructure.com/calendar* //change this to the address of your instance of Canvas.
 // @grant        none
 // ==/UserScript==
 (function() {
@@ -19,9 +19,10 @@
     var array =[];
     var user = '';
     /* role setup */
-    var leng = ENV.current_user_roles.length - 1;
-    var role = ENV.current_user_roles[leng];
-    if ((assocRegex3.test(window.location.pathname)) && (role == "teacher" || role == "admin")) {
+    var roles = ENV.current_user_roles;
+    var buttonRoles = ["admin", "teacher", "root_admin"];
+    var test1 = buttonRoles.some(el => roles.includes(el));
+    if( (test1 === true) && (assocRegex3.test(window.location.pathname))){
         add_button();
     }
     function add_button() {
