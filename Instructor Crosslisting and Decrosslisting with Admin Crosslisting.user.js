@@ -22,12 +22,12 @@
     var array =[];
     var user = '';
     /* role setup */
-   if(ENV.current_user_roles.includes("admin" || "teacher" || "root_admin")) {
-      getCourses();
-  }
-      if(ENV.current_user_roles.includes("admin" || "root_admin")) {
-      add_buttonAdmin();
-  }
+   if( (test1 === true) && (assocRegex.test(window.location.pathname))){
+        getCourses();
+    }
+    if( (test2 === true) && (assocRegex2.test(window.location.pathname))){
+        add_buttonAdmin();
+    }
     function add_button() {
         var parent = document.querySelector('div.ic-Action-header__Secondary');
         if (parent) {
