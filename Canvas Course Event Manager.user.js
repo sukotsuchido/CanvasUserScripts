@@ -4,7 +4,8 @@
 // @version      0.5
 // @description  A Canvas UserScript to manage course events
 // @author       Chad Scott (ChadScott@katyisd.org)
-// @include     https://*.instructure.com/calendar* //change this to the address of your instance of Canvas.
+// @include     https://*.instructure.com/calendar* 
+//change this to the address of your instance of Canvas. Make sure to leave the /calendar* at the end.
 // @grant        none
 // ==/UserScript==
 (function() {
