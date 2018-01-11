@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Canvas Course Event Manager
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      0.5
+// @version      0.51
 // @description  A Canvas UserScript to manage course events
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include     https://*.instructure.com/calendar* 
