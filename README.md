@@ -17,7 +17,7 @@ UserScripts for Canvas LMS
     <li>Hides "This is a preview..." banner and "Submit Quiz" button</li>
     <li>The print dialog will automatically pop-up for the user</li>
     <ul>
-      <li>Multiple Choice: Left aligns choices, all one column<li>
+      <li>Multiple Choice: Left aligns choices, all one column</li>
       <li>Matching: Removes drop-down menu and creates a "answer bank" at the bottom of the question box</li>
       <li>Multiple Dropdowns: Expands the dropdowns to width and height of content</li>
     </ul>
