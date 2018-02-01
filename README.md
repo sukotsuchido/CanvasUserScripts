@@ -11,6 +11,7 @@ UserScripts for Canvas LMS
 <ol>
   <li>Features</li>
   <ol type="A">
+    <li>Adds a "Print Quiz" button below the question navigation pane.</li>
     <li>Auto-page break: This will keep all question content on the same page and prevents a page break in the middle of a question.</li>
     <li>The page is set to zoom to 74% to make it sized appropriately for printing.</li>
     <li>Adjusts certain question types for legibility and space efficiency</li>
