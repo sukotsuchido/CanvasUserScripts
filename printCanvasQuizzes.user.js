@@ -79,10 +79,12 @@
             answerChoices[j].style.verticalAlign = "Top";
             answerChoices[j].style.borderTop = "none";
         }
-        var formActions = document.querySelectorAll("div.form-actions, div.alert,div.ic-RichContentEditor,div.rce_links");
+        
+        //This hides the Submit Quiz footer - delete the /* */ comment tags to hide the footer.
+        /* var formActions = document.querySelectorAll("div.form-actions, div.alert,div.ic-RichContentEditor,div.rce_links");
         for (var h = 0; h < formActions.length; h++) {
             formActions[h].style.visibility = "hidden";
-        }
+        } */
         var essayShrink = document.querySelectorAll("div.mce-tinymce");
         for (var m = 0; m < essayShrink.length; m++) {
             essayShrink[m].style.height = "200px";
