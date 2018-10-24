@@ -7,6 +7,8 @@ UserScripts for Canvas LMS
 
 <b> Canvas Course Event Manager </b> is a script that will allow a user to remove the dates or delete events from a course calendar. The user can select all events displayed (100 at a time) or select specific events.
 
+<b> Canvas Remove Student Tool </b> is a script that will allow an admin to remove students from courses in bulk. It is useful for managing manually created course enrollments for clubs, activities, and special courses.
+
 <b> Print Canvas Quizzes </b> is a script that will allow a user to print a quiz from the preview page. 
 <ol>
   <li>Features</li>
