@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Canvas Remove Student Tool
+// @name         Canvas Student Course Enrollment Manager
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
 // @version      0.5
 // @description  A Canvas UserScript to manage course enrollments
@@ -12,16 +12,12 @@
     'use strict';
     var assocRegex3 = new RegExp('^/courses/([0-9]+)/users');
     var errors = [];
-    var termId = '';
     var courses = [];
-    var allCourses = [];
-    var wholeName = '';
     var array =[];
-    var user = '';
     var courseID = $(location).attr('pathname');
-    courseID.indexOf(1);
-    courseID = courseID.split("/")[2];
-    var pageNum = 0
+        courseID.indexOf(1);
+        courseID = courseID.split("/")[2];
+    var pageNum = 0;
     /* role setup */
     var roles = ENV.current_user_roles;
     var buttonRoles = ["admin", "root_admin"];
@@ -29,8 +25,6 @@
     if( (test1 === true) && (assocRegex3.test(window.location.pathname))){
         add_button();
     }
-
-
 
     function add_button() {
         var parent = document.querySelector('div.ic-Action-header__Secondary');
@@ -51,13 +45,11 @@
             }
         }
     }
-
+    
     function getStudents(){
         // Reset global variable errors
         errors= [];
-
         document.getElementById('moreStu').value = ++pageNum;
-
         var url = "/api/v1/courses/"+courseID+"/enrollments?type[]=StudentEnrollment&per_page=100&page="+pageNum;
         $.ajax({
             'async': true,
@@ -68,24 +60,20 @@
             'contentType': "application/json",
             'url': url,
             'success': function (data, textStatus, response) {
-
                 var toAppend;
-                //var clear = document.getElementById('inner_table');
-                //if (clear.innerHTML !== null){
-                // clear.innerHTML = "";
-                //}
                 $.each(data,function(i,o){
+                  	var dateStr;
                     //last activity date
                     if(o.last_activity_at == null){
-                        var dateStr = "None";
+                         dateStr = "None";
                     }else{
-                        var date = new Date(o.last_activity_at);
-                        var day = date.getDate();
-                        var year = date.getFullYear();
-                        var month = date.getMonth()+1;
-                        dateStr = month+"/"+day+"/"+year;
+                    var date = new Date(o.last_activity_at);
+                    var day = date.getDate();
+                    var year = date.getFullYear();
+                    var month = date.getMonth()+1;
+                      dateStr = month+"/"+day+"/"+year;
                     }
-
+                 
                     toAppend += '<tr><td><input type="checkbox" id="'+o.id+'" name="students" value="'+o.id+'"></td><td>'+o.user.sortable_name+'</td><td>'+dateStr+'</tr>';
                 });
                 $('#table_header').append(toAppend);
@@ -106,18 +94,16 @@
                 'url': url,
                 'success': open_success_dialog
             });
-            console.log(stuID);
+             console.log(stuID);
         });
-
         window.location.reload(true);
     }
-
+   
     function createDialog() {
         var el = document.querySelector('#events_dialog');
         if (!el) {
             el = document.createElement('div');
             el.id = 'events_dialog';
-
             //Events Table
             var table = document.createElement('TABLE');
             table.id = 'table_header';
@@ -158,18 +144,17 @@
             var hr = document.createElement('HR');
             el.appendChild(hr);
             var incrButton = document.createElement('button');
-
-            incrButton.classList.add('Button','button-primary','element_toggler');
-            incrButton.type = 'button';
-            incrButton.id = 'moreStu';
-            incrButton.value = 0;
-            var icon = document.createElement('i');
-            icon.classList.add('icon-user');
-            incrButton.appendChild(icon);
-            var txt = document.createTextNode(' Add More');
-            incrButton.appendChild(txt);
-            incrButton.addEventListener('click', getStudents);
-            el.appendChild(incrButton);
+                incrButton.classList.add('Button','button-primary','element_toggler');
+                incrButton.type = 'button';
+                incrButton.id = 'moreStu';
+                incrButton.value = 0;
+                var icon = document.createElement('i');
+                icon.classList.add('icon-user');
+               incrButton.appendChild(icon);
+                var txt = document.createTextNode(' Add More');
+                incrButton.appendChild(txt);
+                incrButton.addEventListener('click', getStudents);
+                el.appendChild(incrButton);
 
             //message flash
             var msg = document.createElement('div');
@@ -224,7 +209,7 @@
         }
         getStudents();
     }
-
+ 
     function successDialog(){
         var el = document.querySelector('#success_dialog');
         if (!el) {
@@ -316,7 +301,4 @@
             msg.style.display = 'inline-block';
         }
     }
-
-
-
 })();
