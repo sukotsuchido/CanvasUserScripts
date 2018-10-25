@@ -4,6 +4,7 @@
 // @version      0.5
 // @description  A Canvas UserScript to manage course enrollments
 // @author       Chad Scott (ChadScott@katyisd.org)
+// @require     http://pagination.js.org/dist/2.1.4/pagination.min.js
 // @include     https://*.instructure.com/courses/*/users
 // @grant        none
 // ==/UserScript==
@@ -14,8 +15,8 @@
     var courses = [];
     var array =[];
     var courseID = $(location).attr('pathname');
-        courseID.indexOf(1);
-        courseID = courseID.split("/")[2];
+    courseID.indexOf(1);
+    courseID = courseID.split("/")[2];
     var pageNum = 0;
     /* role setup */
     var roles = ENV.current_user_roles;
@@ -44,7 +45,7 @@
             }
         }
     }
-    
+
     function getStudents(){
         // Reset global variable errors
         errors= [];
@@ -61,18 +62,24 @@
             'success': function (data, textStatus, response) {
                 var toAppend;
                 $.each(data,function(i,o){
-                  	var dateStr;
+                    var dateStr;
                     //last activity date
                     if(o.last_activity_at == null){
-                         dateStr = "None";
+                        dateStr = "None";
                     }else{
-                    var date = new Date(o.last_activity_at);
-                    var day = date.getDate();
-                    var year = date.getFullYear();
-                    var month = date.getMonth()+1;
-                      dateStr = month+"/"+day+"/"+year;
+                        var date = new Date(o.last_activity_at);
+                        var day = date.getDate();
+                        var year = date.getFullYear();
+                        var month = date.getMonth()+1;
+                        if(day<10){
+                            day='0'+day;
+                        }
+                        if(month<10){
+                            month='0'+month;
+                        }
+                        dateStr = month+"/"+day+"/"+year;
                     }
-                 
+
                     toAppend += '<tr><td><input type="checkbox" id="'+o.id+'" name="students" value="'+o.id+'"></td><td>'+o.user.sortable_name+'</td><td>'+dateStr+'</tr>';
                 });
                 $('#table_header').append(toAppend);
@@ -93,11 +100,13 @@
                 'url': url,
                 'success': open_success_dialog
             });
-             console.log(stuID);
+            console.log(stuID);
         });
         window.location.reload(true);
     }
-   
+
+
+
     function createDialog() {
         var el = document.querySelector('#events_dialog');
         if (!el) {
@@ -122,38 +131,40 @@
             tr.appendChild(th);
             th = document.createElement('TH');
             th.textContent = 'Student Name';
+            th.onmouseover= function(){
+                this.style.cursor='pointer';
+            }
+            th.onclick = function (){
+                sortTable(1);
+            }
             tr.appendChild(th);
             th = document.createElement('TH');
             th.textContent = 'Last Activity';
+            th.onmouseover= function(){
+                this.style.cursor='pointer';
+            }
+            th.onclick = function (){
+                sortTable(2);
+            }
             tr.appendChild(th);
             var tbody = document.createElement('tbody');
             tbody.id = 'inner_table';
             tbody.onchange= setEvents;
             table.appendChild(tbody);
-            var notice = document.createElement('div');
-            notice.id = 'app';
-            /*notice.id = 'notice';
-            notice.style = 'text-align: right';
-            notice.style.padding = '5px';
-            notice.style.font ='bold 14px arial,serif';
-            notice.textContent ='First 100 Events Only';
-            */
-            el.appendChild(notice);
-            //HR
             var hr = document.createElement('HR');
             el.appendChild(hr);
             var incrButton = document.createElement('button');
-                incrButton.classList.add('Button','button-primary','element_toggler');
-                incrButton.type = 'button';
-                incrButton.id = 'moreStu';
-                incrButton.value = 0;
-                var icon = document.createElement('i');
-                icon.classList.add('icon-user');
-               incrButton.appendChild(icon);
-                var txt = document.createTextNode(' Add More');
-                incrButton.appendChild(txt);
-                incrButton.addEventListener('click', getStudents);
-                el.appendChild(incrButton);
+            incrButton.classList.add('Button','button-primary','element_toggler');
+            incrButton.type = 'button';
+            incrButton.id = 'moreStu';
+            incrButton.value = 0;
+            var icon = document.createElement('i');
+            icon.classList.add('icon-user');
+            incrButton.appendChild(icon);
+            var txt = document.createTextNode(' Add More');
+            incrButton.appendChild(txt);
+            incrButton.addEventListener('click', getStudents);
+            el.appendChild(incrButton);
 
             //message flash
             var msg = document.createElement('div');
@@ -168,6 +179,7 @@
             var state = this.checked; $(':checkbox').each(function() { this.checked = state; });
         });
     }
+
 
     function setEvents() {
         array = $.map($('input[name="students"]:checked'), function(c){return c.value; });
@@ -208,7 +220,7 @@
         }
         getStudents();
     }
- 
+
     function successDialog(){
         var el = document.querySelector('#success_dialog');
         if (!el) {
@@ -257,6 +269,64 @@
             console.log(e);
         }
     }
+    function sortTable(n) {
+        var el = document.querySelector('#events_dialog');
+        if (el) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("table_header");
+            switching = true;
+            // Set the sorting direction to ascending:
+            dir = "asc";
+            /* Make a loop that will continue until
+  no switching has been done: */
+            while (switching) {
+                // Start by saying: no switching is done:
+                switching = false;
+                rows = table.rows;
+                /* Loop through all table rows (except the
+    first, which contains table headers): */
+                for (i = 1; i < (rows.length - 1); i++) {
+                    // Start by saying there should be no switching:
+                    shouldSwitch = false;
+                    /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            // If so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            // If so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    // Each time a switch is done, increase this count by 1:
+                    switchcount ++;
+                } else {
+                    /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    }
+
     function updateMsgs() {
         var msg = document.getElementById('events_msg');
         if (!msg) {
