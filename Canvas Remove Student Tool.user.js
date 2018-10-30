@@ -63,6 +63,19 @@
                 var toAppend;
                 $.each(data,function(i,o){
                     var dateStr;
+                    var dateEnrStr;
+                    var date2 = new Date(o.created_at);
+                        var day2 = date2.getDate();
+                        var year2 = date2.getFullYear();
+                        var month2 = date2.getMonth()+1;
+                        if(day2<10){
+                            day2='0'+day2;
+                        }
+                        if(month2<10){
+                            month2='0'+month2;
+                        }
+                        dateEnrStr = month2+"/"+day2+"/"+year2;
+
                     //last activity date
                     if(o.last_activity_at == null){
                         dateStr = "None";
@@ -80,7 +93,7 @@
                         dateStr = month+"/"+day+"/"+year;
                     }
 
-                    toAppend += '<tr><td><input type="checkbox" id="'+o.id+'" name="students" value="'+o.id+'"></td><td>'+o.user.sortable_name+'</td><td>'+dateStr+'</tr>';
+                    toAppend += '<tr><td><input type="checkbox" id="'+o.id+'" name="students" value="'+o.id+'"></td><td>'+o.user.sortable_name+'</td><td>'+dateEnrStr+'</td><td>'+dateStr+'</td></tr>';
                 });
                 $('#table_header').append(toAppend);
             }
@@ -139,12 +152,21 @@
             }
             tr.appendChild(th);
             th = document.createElement('TH');
-            th.textContent = 'Last Activity';
+            th.textContent = 'Enrollment Date';
             th.onmouseover= function(){
                 this.style.cursor='pointer';
             }
             th.onclick = function (){
                 sortTable(2);
+            }
+            tr.appendChild(th);
+            th = document.createElement('TH');
+            th.textContent = 'Last Activity';
+            th.onmouseover= function(){
+                this.style.cursor='pointer';
+            }
+            th.onclick = function (){
+                sortTable(3);
             }
             tr.appendChild(th);
             var tbody = document.createElement('tbody');
