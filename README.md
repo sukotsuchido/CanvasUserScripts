@@ -33,3 +33,5 @@ UserScripts for Canvas LMS
     <li>Not usable in the Quizzez.next LTI</li>
   </ol>
   </ol>
+  
+  <b>Remove Color Overlay</b> is a script that removes the color overlay of courses with course images on the Dashboard. This is a workaround since admin is unable to set the default Dashboard experience for users.
