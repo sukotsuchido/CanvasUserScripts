@@ -674,7 +674,7 @@
                         select.options.length = 0; // clear out existing items
                         $.each(data,function(i,o){
                             var n = o.name;
-                            if (n.toUpperCase() !== n && role){
+                            if (n.toUpperCase() !== n){
                                 toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
                             }
                         });
@@ -783,7 +783,7 @@
                             'type' : 'DELETE',
 
                         }).done(function() {
-                            // closeDialog();
+                            closeDialog();
                         });
                     }
                 });
@@ -843,6 +843,11 @@
             input.type = 'text';
             input.placeholder = 'Enter Teacher Name';
             el11.appendChild(input);
+            $("#jj_cross_user").keyup(function(event){
+                if(event.keyCode == 13){
+                    $("#btnSearch").click();
+                }
+            });
             var searchButton = document.createElement('button');
             searchButton.type = 'button';
             searchButton.id = 'btnSearch';
@@ -931,6 +936,10 @@
     }
     //Admin Crosslist
     function add_buttonAdmin(){
+
+        var rightDiv = document.querySelector('div#right-side-wrapper');
+            rightDiv.style.display='list-item';
+        
         var parent = document.querySelector('aside#right-side');
         if (parent) {
             var el = parent.querySelector('#jj_cross');
@@ -951,7 +960,7 @@
             var el2 = parent.querySelector('#jj_decross');
             if (!el2) {
                 el2 = document.createElement('button');
-                el2.classList.add('Button', 'element_toggler');
+                el2.classList.add('Button','Button--secondary','button-sidebar-wide','element_toggler');
                 el2.type = 'button';
                 el2.id = 'jj_decross';
                 var icon2 = document.createElement('i');
@@ -993,6 +1002,11 @@
             searchButton.onclick = searchUser;
             searchButton.classList.add('Button');
             el11.appendChild(searchButton);
+            $("#jj_cross_user").keyup(function(event){
+                if(event.keyCode == 13){
+                    $("#btnSearch").click();
+                }
+            });
             //teacher dropdown
             label = document.createElement('label');
             label.htmlFor = 'jj_cross_Results';
@@ -1023,7 +1037,7 @@
             //childcourse checkboxes
             var el6 = document.createElement('fieldset');
             el6.id = 'child_list';
-            el6.style.display = 'none';
+            el6.style.visibility = 'none';
             el6.classList.add("ic-Fieldset", "ic-Fieldset--radio-checkbox");
             el.appendChild(el6);
             var el7 = document.createElement('legend');
@@ -1037,7 +1051,7 @@
             //Course Name
             var el9 = document.createElement('div');
             el9.id = 'course_div';
-            el9.style.display = 'none';
+            el9.style.visibility = 'none';
             el9.classList.add('ic-Form-control');
             el.appendChild(el9);
             label = document.createElement('label');
@@ -1054,7 +1068,7 @@
             //Course Name Examples
             var el10 = document.createElement('p');
             el10.id = 'examples';
-            el10.style.display = 'none';
+            el10.style.visibility = 'none';
             el10.classList = 'text-info';
             el.appendChild(el10);
             var ol = document.createElement('ol');
