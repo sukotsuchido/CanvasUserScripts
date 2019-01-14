@@ -712,147 +712,7 @@
         }
     }
     //Admin Tool Functions
-    function add_buttonAdmin(){
-        var parent = document.querySelector('aside#right-side');
-        if (parent) {
-            var el = parent.querySelector('#jj_cross');
-            if (!el) {
-                el = document.createElement('button');
-                el.classList.add('Button','Button--primary','button-sidebar-wide','element_toggler');
-                el.type = 'button';
-                el.id = 'jj_cross';
-                var icon = document.createElement('i');
-                icon.classList.add('icon-sis-synced');
-                el.appendChild(icon);
-                var txt = document.createTextNode(' Admin Crosslist Tool');
-                el.appendChild(txt);
-                el.addEventListener('click', openDialog3);
-                parent.appendChild(el);
-            }
-        }
-    }
-    function keyEnter() {
-        if (event.keyCode == 13) {
-            document.getElementById('btnSearch').click();
-        }
-    }
-     function adminDialog() {
-        var el = document.querySelector('#jj_admin_dialog');
-        if (!el) {
-            //User Search
-            el = document.createElement('form');
-            el.id = 'jj_admin_dialog';
-            el.classList.add("ic-Form-control","account_search_form");
-            var label = document.createElement('label');
-            label.htmlFor = 'jj_cross_user';
-            label.textContent = 'Search For Teacher:';
-            label.classList.add('ic-Label');
-            el.appendChild(label);
-            var el11 = document.createElement('div');
-            el11.style =('margin: 0 0 10px 0');
-            el11.classList.add('ic-Input-group');
-            el.appendChild(el11);
-            var input = document.createElement('input');
-            input.classList.add('ic-Input');
-            input.id = 'jj_cross_user';
-            input.type = 'text';
-            input.onkeyup = keyEnter;
-            input.placeholder = 'Enter Teacher Name';
-            el11.appendChild(input);
-            var searchButton = document.createElement('button');
-            searchButton.type = 'button';
-            searchButton.id = 'btnSearch';
-            searchButton.textContent = 'Search';
-            searchButton.onclick = searchUser;
-            searchButton.classList.add('Button');
-            el11.appendChild(searchButton);
-            //teacher dropdown
-            label = document.createElement('label');
-            label.htmlFor = 'jj_cross_Results';
-            label.textContent = 'Search Results';
-            label.classList.add('ic-Label');
-            el.appendChild(label);
-            var select = document.createElement('select');
-            select.id = 'jj_cross_chooseuser';
-            select.classList.add('ic-Input');
-            select.placeholder = 'Select Teacher:';
-            select.onchange = getCoursesAdmin;
-            el.appendChild(select);
-            var el5 = document.createElement('div');
-            el5.classList.add('ic-Form-control');
-            el.appendChild(el5);
-            var br = document.createElement('hr');
-            el5.appendChild(br);
-            label = document.createElement('label');
-            label.htmlFor = 'jj_cross_parentCourse';
-            label.textContent = 'Step 1: Select Bucket Course:';
-            label.classList.add('ic-Label');
-            el5.appendChild(label);
-            select = document.createElement('select');
-            select.id = 'jj_cross_parentCourse';
-            select.classList.add('ic-Input');
-            select.onchange = getChildren;
-            el5.appendChild(select);
-            //childcourse checkboxes
-            var el6 = document.createElement('fieldset');
-            el6.id = 'child_list';
-            el6.style.display = 'none';
-            el6.classList.add("ic-Fieldset", "ic-Fieldset--radio-checkbox");
-            el.appendChild(el6);
-            var el7 = document.createElement('legend');
-            el7.classList.add('ic-Legend');
-            el7.textContent = 'Step 2: Choose Courses to Crosslist Into Bucket Course:';
-            el6.appendChild(el7);
-            var el8 = document.createElement('div');
-            el8.id = 'checkboxes';
-            el8.classList.add('ic-Checkbox-group');
-            el6.appendChild(el8);
-            //Course Name
-            var el9 = document.createElement('div');
-            el9.id = 'course_div';
-            el9.style.display = 'none';
-            el9.classList.add('ic-Form-control');
-            el.appendChild(el9);
-            label = document.createElement('label');
-            label.htmlFor = 'course_name';
-            label.textContent = 'Step 3: Course Name:';
-            label.classList.add('ic-Label');
-            el9.appendChild(label);
-            input = document.createElement('input');
-            input.id = 'course_name';
-            input.classList.add('ic-Input');
-            input.type = 'text';
-            input.placeholder = 'Campus Initials Course Name Teacher Name (First Initial.Last Name)';
-            el9.appendChild(input);
-            //Course Name Examples
-            var el10 = document.createElement('p');
-            el10.id = 'examples';
-            el10.style.display = 'none';
-            el10.classList = 'text-info';
-            el.appendChild(el10);
-            var ol = document.createElement('ol');
-            ol.textContent = 'Examples:';
-            ol.classList = 'unstyled';
-            el10.appendChild(ol);
-            var li = document.createElement('li');
-            li.textContent = 'KHS English III A M.Smith';
-            ol.appendChild(li);
-            li = document.createElement('li');
-            li.textContent = 'BJH Spanish 1 PreAP G.Moreno';
-            ol.appendChild(li);
-            li = document.createElement('li');
-            li.textContent = 'Elementary: KDE 4 Math G.Rorey';
-            ol.appendChild(li);
-            //message flash
-            var msg = document.createElement('div');
-            msg.id = 'jj_cross_msg';
-            //msg.classList.add('ic-flash-warning');
-            msg.style.display = 'none';
-            el.appendChild(msg);
-            var parent = document.querySelector('body');
-            parent.appendChild(el);
-        }
-    }
+    //Admin De-Crosslist
     function searchUser() {
         // Reset global variable errors
         errors = [];
@@ -877,19 +737,19 @@
                 'success': function(data){
                     if(data.length > 0){
                         var toAppend = '';
-                        var blank = ''; 
+                        var blank = '';
                         var select = document.getElementById('jj_cross_chooseuser');
                         select.options.length = 0; // clear out existing items
                         $.each(data,function(i,o){
                             var n = o.name;
-                            if (n.toUpperCase() !== n && role){
+                            if (n.toUpperCase() !== n){
                                 toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
                             }
                         });
                         blank += '<option value="">Please select</option>';
                         $('#jj_cross_chooseuser').append(blank);
                         $('#jj_cross_chooseuser').append(toAppend);
-                        var x = document.getElementById("jj_cross_user");		
+                        var x = document.getElementById("jj_cross_user");
                         if (x.className === "ic-Input") {
                             x.style.background = "#fff";
                         }
@@ -935,6 +795,372 @@
                 $('#jj_cross_parentCourse').append(toAppend);
             }
         });
+    }
+    function setParentDecross(){
+        // Reset global variable errors
+        errors= [];
+        user = document.getElementById('jj_cross_chooseuser').value;
+        var url = "/api/v1/users/"+ user +"/courses?include[]=term&include[]=sections&per_page=75"; 
+        $.ajax({
+            'async': true,
+            'type': "GET",
+            'global': true,
+            'dataType': 'JSON',
+            'data': JSON.stringify(courses),
+            'contentType': "application/json",
+            'url': url,
+            'success': function(courses){
+                dedupThings = Array.from(courses.reduce((m, t) => m.set(t.id, t), new Map()).values());
+                var toAppend = '';
+                var blank ='';
+                var select2 = document.getElementById('jj_cross_parentCourse');
+                select2.options.length = 0; // clear out existing items
+                var getMax = getTerm(dedupThings, "enrollment_term_id");
+                termId = getMax.enrollment_term_id;
+                $.each(dedupThings, function(i, o){
+                    if (o.enrollment_term_id == termId && o.sections.length > 1) {
+                        toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
+                    }
+                });
+                blank += '<option value="">Please select</option>';
+                $('#jj_cross_parentCourse').append(blank);
+                $('#jj_cross_parentCourse').append(toAppend);
+            }
+        });
+    }
+    function getSections(){
+        var courseSections;
+        parentId = document.getElementById("jj_cross_parentCourse").value;
+        var url = "/api/v1/courses/" + parentId + "/sections?";
+        $.ajax({
+            'async': true,
+            'type': "GET",
+            'global': true,
+            'dataType': 'JSON',
+            'data': JSON.stringify(courseSections),
+            'contentType': "application/json",
+            'url': url,
+            'success': function (courseSections) {
+                $.each(courseSections, function(index,item){
+                    array = item.id;
+                    if(array !== parentId){
+                        var url2 = "/api/v1/sections/" + array + "/crosslist/";
+                        $.ajax({
+                            'cache' : false,
+                            'url' : url2 ,
+                            'type' : 'DELETE',
+
+                        }).done(function() {
+                            closeDialog();
+                        });
+                    }
+                });
+            }
+        });
+    }
+    function openDialog2() {
+        try {
+            createDialog2();
+            $('#jj_cross_dialog2').dialog({
+                'title' : 'Admin De-Crosslist Tool',
+                'autoOpen' : false,
+                'closeOnEscape': false,
+                'open': function () { $(".ui-dialog-titlebar-close").hide(); $(".ui-dialog").css("top", "10px");},
+                'buttons' : [  {
+                    'text' : 'Cancel',
+                    'click' : function() {
+                        $(this).dialog('destroy').remove();
+                        errors = [];
+                        updateMsgs();
+                    }
+                },{
+                    'text' : 'Submit',
+                    'class': 'Button Button--primary',
+                    'click' : getSections
+                } ],
+                'modal' : true,
+                'resizable' : false,
+                'height' : 'auto',
+                'width' : '40%',
+            });
+            if (!$('#jj_cross_dialog2').dialog('isOpen')) {
+                $('#jj_cross_dialog2').dialog('open');
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    function createDialog2() {
+        var el = document.querySelector('#jj_cross_dialog2');
+        if (!el) {
+            el = document.createElement('form');
+            el.id = 'jj_cross_dialog2';
+            el.classList.add("ic-Form-control","account_search_form");
+            var label = document.createElement('label');
+            label.htmlFor = 'jj_cross_user';
+            label.textContent = 'Search For Teacher:';
+            label.classList.add('ic-Label');
+            el.appendChild(label);
+            var el11 = document.createElement('div');
+            el11.style =('margin: 0 0 10px 0');
+            el11.classList.add('ic-Input-group');
+            el.appendChild(el11);
+            var input = document.createElement('input');
+            input.classList.add('ic-Input');
+            input.id = 'jj_cross_user';
+            input.type = 'text';
+            input.placeholder = 'Enter Teacher Name';
+            el11.appendChild(input);
+            $("#jj_cross_user").keyup(function(event){
+                if(event.keyCode == 13){
+                    $("#btnSearch").click();
+                }
+            });
+            var searchButton = document.createElement('button');
+            searchButton.type = 'button';
+            searchButton.id = 'btnSearch';
+            searchButton.textContent = 'Search';
+            searchButton.onclick = searchUser;
+            searchButton.classList.add('Button');
+            el11.appendChild(searchButton);
+            //teacher dropdown
+            label = document.createElement('label');
+            label.htmlFor = 'jj_cross_choosuser';
+            label.textContent = 'Search Results';
+            label.classList.add('ic-Label');
+            el.appendChild(label);
+            var select = document.createElement('select');
+            select.id = 'jj_cross_chooseuser';
+            select.classList.add('ic-Input');
+            select.placeholder = 'Select Teacher:';
+            select.onchange = setParentDecross;
+            el.appendChild(select);
+            var el5 = document.createElement('div');
+            el5.classList.add('ic-Form-control');
+            el.appendChild(el5);
+            var br = document.createElement('hr');
+            el5.appendChild(br);
+            label = document.createElement('label');
+            label.htmlFor = 'jj_cross_parentCourse';
+            label.textContent = 'Step 1: Select Bucket Course:';
+            label.classList.add('ic-Label');
+            el5.appendChild(label);
+            select = document.createElement('select');
+            select.id = 'jj_cross_parentCourse';
+            select.classList.add('ic-Input');
+            el5.appendChild(select);
+            //message flash
+            var msg = document.createElement('div');
+            msg.id = 'jj_cross_msg2';
+            //msg.classList.add('ic-flash-warning');
+            msg.style.display = 'none';
+            el.appendChild(msg);
+            var parent = document.querySelector('body');
+            parent.appendChild(el);
+        }
+    }
+    function updateMsgs2() {
+        var msg = document.getElementById('jj_cross_msg2');
+        if (!msg) {
+            return;
+        }
+        if (msg.hasChildNodes()) {
+            msg.removeChild(msg.childNodes[0]);
+        }
+        if (typeof errors === 'undefined' || errors.length === 0) {
+            msg.style.display = 'none';
+        } else {
+            var div1 = document.createElement('div');
+            div1.classList.add('ic-flash-error');
+            var div2;
+            div2 = document.createElement('div');
+            div2.classList.add('ic-flash__icon');
+            div2.classList.add('aria-hidden="true"');
+            div1.appendChild(div2);
+            var icon;
+            icon = document.createElement('i');
+            icon.classList.add('icon-warning');
+            div2.appendChild(icon);
+            var ul = document.createElement('ul');
+            for (var i = 0; i < errors.length; i++) {
+                var li;
+                li = document.createElement('li');
+                li.textContent = errors[i];
+                ul.appendChild(li);
+            }
+            div1.appendChild(ul);
+            var button;
+            button = document.createElement('button');
+            button.type = 'button';
+            button.classList.add("Button", "Button--icon-action", "close_link");
+            div1.appendChild(button);
+            icon = document.createElement('i');
+            icon.classList.add('ic-icon-x');
+            icon.classList.add('aria-hidden="true"');
+            button.appendChild(icon);
+            msg.appendChild(div1);
+            msg.style.display = 'inline-block';
+        }
+    }
+    //Admin Crosslist
+    function add_buttonAdmin(){
+
+        var rightDiv = document.querySelector('div#right-side-wrapper');
+            rightDiv.style.display='list-item';
+        
+        var parent = document.querySelector('aside#right-side');
+        if (parent) {
+            var el = parent.querySelector('#jj_cross');
+            if (!el) {
+                el = document.createElement('button');
+                el.classList.add('Button','Button--primary','button-sidebar-wide','element_toggler');
+                el.type = 'button';
+                el.id = 'jj_cross';
+                var icon = document.createElement('i');
+                icon.classList.add('icon-sis-synced');
+                el.appendChild(icon);
+                var txt = document.createTextNode(' Admin Crosslist Tool');
+                el.appendChild(txt);
+                el.addEventListener('click', openDialog3);
+                parent.appendChild(el);
+            }
+            //decrosslist button
+            var el2 = parent.querySelector('#jj_decross');
+            if (!el2) {
+                el2 = document.createElement('button');
+                el2.classList.add('Button','Button--secondary','button-sidebar-wide','element_toggler');
+                el2.type = 'button';
+                el2.id = 'jj_decross';
+                var icon2 = document.createElement('i');
+                icon2.classList.add('icon-sis-not-synced');
+                el2.appendChild(icon2);
+                var txt2 = document.createTextNode(' De-Crosslist Courses');
+                el2.appendChild(txt2);
+                el2.addEventListener('click', openDialog2);
+                parent.appendChild(el2);
+            }
+        }
+    }
+    function adminDialog() {
+        var el = document.querySelector('#jj_admin_dialog');
+        if (!el) {
+            //User Search
+            el = document.createElement('form');
+            el.id = 'jj_admin_dialog';
+            el.classList.add("ic-Form-control","account_search_form");
+            var label = document.createElement('label');
+            label.htmlFor = 'jj_cross_user';
+            label.textContent = 'Search For Teacher:';
+            label.classList.add('ic-Label');
+            el.appendChild(label);
+            var el11 = document.createElement('div');
+            el11.style =('margin: 0 0 10px 0');
+            el11.classList.add('ic-Input-group');
+            el.appendChild(el11);
+            var input = document.createElement('input');
+            input.classList.add('ic-Input');
+            input.id = 'jj_cross_user';
+            input.type = 'text';
+            input.placeholder = 'Enter Teacher Name';
+            el11.appendChild(input);
+            var searchButton = document.createElement('button');
+            searchButton.type = 'button';
+            searchButton.id = 'btnSearch';
+            searchButton.textContent = 'Search';
+            searchButton.onclick = searchUser;
+            searchButton.classList.add('Button');
+            el11.appendChild(searchButton);
+            $("#jj_cross_user").keyup(function(event){
+                if(event.keyCode == 13){
+                    $("#btnSearch").click();
+                }
+            });
+            //teacher dropdown
+            label = document.createElement('label');
+            label.htmlFor = 'jj_cross_Results';
+            label.textContent = 'Search Results';
+            label.classList.add('ic-Label');
+            el.appendChild(label);
+            var select = document.createElement('select');
+            select.id = 'jj_cross_chooseuser';
+            select.classList.add('ic-Input');
+            select.placeholder = 'Select Teacher:';
+            select.onchange = getCoursesAdmin;
+            el.appendChild(select);
+            var el5 = document.createElement('div');
+            el5.classList.add('ic-Form-control');
+            el.appendChild(el5);
+            var br = document.createElement('hr');
+            el5.appendChild(br);
+            label = document.createElement('label');
+            label.htmlFor = 'jj_cross_parentCourse';
+            label.textContent = 'Step 1: Select Bucket Course:';
+            label.classList.add('ic-Label');
+            el5.appendChild(label);
+            select = document.createElement('select');
+            select.id = 'jj_cross_parentCourse';
+            select.classList.add('ic-Input');
+            select.onchange = getChildren;
+            el5.appendChild(select);
+            //childcourse checkboxes
+            var el6 = document.createElement('fieldset');
+            el6.id = 'child_list';
+            el6.style.visibility = 'none';
+            el6.classList.add("ic-Fieldset", "ic-Fieldset--radio-checkbox");
+            el.appendChild(el6);
+            var el7 = document.createElement('legend');
+            el7.classList.add('ic-Legend');
+            el7.textContent = 'Step 2: Choose Courses to Crosslist Into Bucket Course:';
+            el6.appendChild(el7);
+            var el8 = document.createElement('div');
+            el8.id = 'checkboxes';
+            el8.classList.add('ic-Checkbox-group');
+            el6.appendChild(el8);
+            //Course Name
+            var el9 = document.createElement('div');
+            el9.id = 'course_div';
+            el9.style.visibility = 'none';
+            el9.classList.add('ic-Form-control');
+            el.appendChild(el9);
+            label = document.createElement('label');
+            label.htmlFor = 'course_name';
+            label.textContent = 'Step 3: Course Name:';
+            label.classList.add('ic-Label');
+            el9.appendChild(label);
+            input = document.createElement('input');
+            input.id = 'course_name';
+            input.classList.add('ic-Input');
+            input.type = 'text';
+            input.placeholder = 'Campus Initials Course Name Teacher Name (First Initial.Last Name)';
+            el9.appendChild(input);
+            //Course Name Examples
+            var el10 = document.createElement('p');
+            el10.id = 'examples';
+            el10.style.visibility = 'none';
+            el10.classList = 'text-info';
+            el.appendChild(el10);
+            var ol = document.createElement('ol');
+            ol.textContent = 'Examples:';
+            ol.classList = 'unstyled';
+            el10.appendChild(ol);
+            var li = document.createElement('li');
+            li.textContent = 'KHS English III A M.Smith';
+            ol.appendChild(li);
+            li = document.createElement('li');
+            li.textContent = 'BJH Spanish 1 PreAP G.Moreno';
+            ol.appendChild(li);
+            li = document.createElement('li');
+            li.textContent = 'Elementary: KDE 4 Math G.Rorey';
+            ol.appendChild(li);
+            //message flash
+            var msg = document.createElement('div');
+            msg.id = 'jj_cross_msg';
+            //msg.classList.add('ic-flash-warning');
+            msg.style.display = 'none';
+            el.appendChild(msg);
+            var parent = document.querySelector('body');
+            parent.appendChild(el);
+        }
     }
     function openDialog3() {
         try {
