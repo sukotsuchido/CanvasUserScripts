@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         KatyISD Instructor and Admin Crosslisting Tools
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      1.6
+// @version      1.7
 // @description  A Canvas UserScript to facilitate crosslisting of courses.
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include     https://*.instructure.com/courses
