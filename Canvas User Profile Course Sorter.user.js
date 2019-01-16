@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Canvas Enrollments Sorter
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      0.5
+// @version      1.0
 // @description  Adds sorting buttons to courses list on User Account Details Page
 // @author       Chad Scott (ChadScott@katyisd.org
 // @include      https://*.instructure.com/accounts/*/users/*
