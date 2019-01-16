@@ -3,7 +3,7 @@
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
 // @version      1.0
 // @description  Adds sorting buttons to courses list on User Account Details Page
-// @author       Chad Scott (ChadScott@katyisd.org
+// @author       Chad Scott (ChadScott@katyisd.org)
 // @include      https://*.instructure.com/accounts/*/users/*
 // @include      https://*.instructure.com/users/*
 // @grant        none
