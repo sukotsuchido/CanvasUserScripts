@@ -13,7 +13,9 @@
 (function() {
    $(document).ready ( function(){
     
-
+//expand enrollments window
+document.getElementById('courses_list').childNodes[3].childNodes[1].style.maxHeight = "";
+      
 $( "li.clearfix" ).each(function( index ) {
   $( this ).find( "span:eq(1)" ).addClass( 'termCS' );
 });
