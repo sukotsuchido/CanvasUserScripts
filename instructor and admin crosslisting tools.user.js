@@ -24,7 +24,7 @@
     /* role setup: Change the roles you want to have access to the crosslisting features. assocRegex is for the button on the all courses page and assocRegex2 is for the admin page. */
     var roles = ENV.current_user_roles;
     var cxbuttonRoles = ["admin", "teacher", "root_admin"];
-    var admincxbuttonRoles = ["admin", "root_admin"];
+    var admincxbuttonRoles = ["root_admin"];
     var test1 = cxbuttonRoles.some(el => roles.includes(el));
     var test2 = admincxbuttonRoles.some(el => roles.includes(el));
     if( (test1 === true) && (assocRegex.test(window.location.pathname))){
