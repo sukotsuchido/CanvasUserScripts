@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Print Canvas Quiz
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      1.0
+// @version      1.1
 // @description  Allows the user to print quizzes from the preview page.
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include      https://*.instructure.com/courses/*/quizzes/*/take?preview*
@@ -82,7 +82,7 @@
             answerChoices[j].style.borderTop = "none";
         }
         
-        //This hides the Submit Quiz footer - delete the /* */ comment tags to hide the footer.
+        //This hides extra elements around the quiz
         var formActions = document.querySelectorAll("div.alert,div.ic-RichContentEditor,div.rce_links");
         for (var h = 0; h < formActions.length; h++) {
             formActions[h].style.visibility = "hidden";
