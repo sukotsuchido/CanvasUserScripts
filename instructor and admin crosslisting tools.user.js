@@ -673,10 +673,10 @@
                         var select = document.getElementById('jj_cross_chooseuser');
                         select.options.length = 0; // clear out existing items
                         $.each(data,function(i,o){
-                            var n = o.name;
-                            if (n.toUpperCase() !== n){
+                           // var n = o.name;
+                            //if (n.toUpperCase() !== n){
                                 toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
-                            }
+                            //}
                         });
                         blank += '<option value="">Please select</option>';
                         $('#jj_cross_chooseuser').append(blank);
