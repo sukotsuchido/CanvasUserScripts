@@ -1,20 +1,18 @@
 // ==UserScript==
 // @name         Print Canvas Quiz
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      1.1
+// @version      1.0
 // @description  Allows the user to print quizzes from the preview page.
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include      https://*.instructure.com/courses/*/quizzes/*/take?preview*
 // ==/UserScript==
 (function() {
-    var assocRegex11 = new RegExp('courses\/([0-9]+)\/quizzes\/([0-9]+)\/take');
-    if( (assocRegex11.test(window.location.pathname))){
+    $(document).ready ( function(){
         var parent = document.querySelector('#right-side');
-        var el = document.createElement('button');
+        el = document.createElement('button');
         el.classList.add('Button','element_toggler','button-sidebar-wide');
         el.type = 'button';
         el.id = 'printQuizButton';
-        el.title = 'In Settings - uncheck "Show one question at a time"'
         var icon = document.createElement('i');
         icon.classList.add('icon-document');
         el.appendChild(icon);
@@ -22,7 +20,7 @@
         el.appendChild(txt);
         el.addEventListener('click', allMatchQuestions);
         parent.appendChild(el);
-    }
+    });
     function allMatchQuestions(){
         var allMatchQuestions = document.querySelectorAll("div.matching_question");
         for (var z = 0; z < allMatchQuestions.length; z++) {
@@ -82,11 +80,11 @@
             answerChoices[j].style.borderTop = "none";
         }
         
-        //This hides extra elements around the quiz
+        //This hides the Submit Quiz footer - delete the /* */ comment tags to hide the footer.
         var formActions = document.querySelectorAll("div.alert,div.ic-RichContentEditor,div.rce_links");
         for (var h = 0; h < formActions.length; h++) {
             formActions[h].style.visibility = "hidden";
-        } 
+        }
         var essayShrink = document.querySelectorAll("div.mce-tinymce");
         for (var m = 0; m < essayShrink.length; m++) {
             essayShrink[m].style.height = "200px";
