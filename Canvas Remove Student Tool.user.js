@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Canvas Student Course Enrollment Manager
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      1.0
+// @version      1.2
 // @description  A Canvas UserScript to manage course enrollments
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include     https://*.instructure.com/courses/*/users
@@ -12,6 +12,7 @@
     var assocRegex3 = new RegExp('^/courses/([0-9]+)/users');
     var errors = [];
     var courses = [];
+    var sections = [];
     var array =[];
     var courseID = $(location).attr('pathname');
     courseID.indexOf(1);
@@ -45,6 +46,33 @@
         }
     }
 
+    function getSections(){
+        var url = "/api/v1/courses/"+courseID+"/sections?&per_page=100";
+        $.ajax({
+            'async': true,
+            'type': "GET",
+            'global': true,
+            'dataType': 'JSON',
+            'data': JSON.stringify(sections),
+            'contentType': "application/json",
+            'url': url,
+            'success': function (data, textStatus, response) {
+
+                $.each(data,function(i,o){
+                    var sectionID = o.id;
+                    var sectionName = o.name;
+
+                    sections.push({
+    key:   sectionID,
+    value: sectionName
+});
+
+                });
+
+            }
+    });
+    }
+
     function getStudents(){
         // Reset global variable errors
         errors= [];
@@ -63,6 +91,15 @@
                 $.each(data,function(i,o){
                     var dateStr;
                     var dateEnrStr;
+
+                    var stuSectionID;
+                    var stuSectionName;
+                    stuSectionID = o.course_section_id;
+
+                    stuSectionName = sections.find(item => item.key === stuSectionID).value;
+
+
+
                     var date2 = new Date(o.created_at);
                         var day2 = date2.getDate();
                         var year2 = date2.getFullYear();
@@ -92,7 +129,7 @@
                         dateStr = month+"/"+day+"/"+year;
                     }
 
-                    toAppend += '<tr><td><input type="checkbox" id="'+o.id+'" name="students" value="'+o.id+'"></td><td>'+o.user.sortable_name+'</td><td>'+dateEnrStr+'</td><td>'+dateStr+'</td></tr>';
+                    toAppend += '<tr><td><input type="checkbox" id="'+o.id+'" name="students" value="'+o.id+'"></td><td>'+o.user.sortable_name+'</td><td>'+stuSectionName+'</td><td>'+dateEnrStr+'</td><td>'+dateStr+'</td></tr>';
                 });
                 $('#table_header').append(toAppend);
             }
@@ -151,7 +188,7 @@
             }
             tr.appendChild(th);
             th = document.createElement('TH');
-            th.textContent = 'Enrollment Date';
+            th.textContent = 'Section';
             th.onmouseover= function(){
                 this.style.cursor='pointer';
             }
@@ -160,12 +197,21 @@
             }
             tr.appendChild(th);
             th = document.createElement('TH');
-            th.textContent = 'Last Activity';
+            th.textContent = 'Enrollment Date';
             th.onmouseover= function(){
                 this.style.cursor='pointer';
             }
             th.onclick = function (){
                 sortTable(3);
+            }
+            tr.appendChild(th);
+            th = document.createElement('TH');
+            th.textContent = 'Last Activity';
+            th.onmouseover= function(){
+                this.style.cursor='pointer';
+            }
+            th.onclick = function (){
+                sortTable(4);
             }
             tr.appendChild(th);
             var tbody = document.createElement('tbody');
@@ -207,6 +253,7 @@
     }
     function openDialog() {
         try {
+            getSections();
             createDialog();
             $('#events_dialog').dialog({
                 'title' : 'Manage Student Enrollments',
