@@ -5,7 +5,6 @@
 // @description  A Canvas UserScript to manage course events
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include     https://*.instructure.com/calendar* 
-//change this to the address of your instance of Canvas. Make sure to leave the /calendar* at the end.
 // @grant        none
 // ==/UserScript==
 (function() {
@@ -27,12 +26,12 @@
         add_button();
     }
     function add_button() {
-        var parent = document.querySelector('div.header-table-right');
+        var parent = document.querySelector('aside#right-side');
         if (parent) {
             var el = parent.querySelector('#manage_events');
             if (!el) {
                 el = document.createElement('button');
-                el.classList.add('Button','element_toggler');
+                el.classList.add('Button');
                 el.type = 'button';
                 el.id = 'manage_events';
                 var icon = document.createElement('i');
