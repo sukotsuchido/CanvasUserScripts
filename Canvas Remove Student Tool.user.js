@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Canvas Student Course Enrollment Manager
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      1.2
+// @version      1.3
 // @description  A Canvas UserScript to manage course enrollments
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include     https://*.instructure.com/courses/*/users
@@ -140,7 +140,7 @@
             var stuID = item;
             var url = "/api/v1/courses/"+courseID+"/enrollments/"+stuID+"?task=delete";
             $.ajax({
-                'async': true,
+                'async': false,
                 'type': "DELETE",
                 'global': true,
                 'dataType': 'JSON',
