@@ -5,6 +5,7 @@
 // @description  Allows the user to print quizzes from the preview page.
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include      https://*.instructure.com/courses/*/quizzes/*/take?preview*
+
 // ==/UserScript==
 (function() {
     $(document).ready ( function(){
