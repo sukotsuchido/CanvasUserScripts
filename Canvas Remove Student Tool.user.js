@@ -6,6 +6,7 @@
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include     https://*.instructure.com/courses/*/users
 // @require     https://code.jquery.com/jquery-3.4.1.min.js
+// @require     https://code.jquery.com/ui/1.12.1/jquery-ui.js
 // @grant        none
 // ==/UserScript==
 (function() {
@@ -283,6 +284,7 @@
             });
             if (!$('#events_dialog').dialog('isOpen')) {
                 $('#events_dialog').dialog('open');
+                $('#events_dialog').parent().css( "z-index", "9999" );
             }
         } catch (e) {
             console.log(e);
@@ -333,6 +335,7 @@
             });
             if (!$('#success_dialog').dialog('isOpen')) {
                 $('#success_dialog').dialog('open');
+                $('#success_dialog').parent().css( "z-index", "9999" );
             }
         } catch (e) {
             console.log(e);
