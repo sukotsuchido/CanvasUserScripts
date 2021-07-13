@@ -1,11 +1,13 @@
+/* globals jQuery, $, waitForKeyElements */
 // ==UserScript==
-// @name         KatyISD Instructor and Admin Crosslisting Tools
+// @name         KatyISD Instructor and Admin Crosslisting/Decrosslisting Tools
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      2.0
+// @version      2.1
 // @description  A Canvas UserScript to facilitate crosslisting of courses.
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include     https://*.instructure.com/courses
 // @include     https://*.instructure.com/accounts/*
+// @require     https://code.jquery.com/jquery-3.4.1.min.js
 // @grant        none
 // ==/UserScript==
 (function() {
@@ -21,29 +23,33 @@
     var wholeName = '';
     var array =[];
     var user = '';
-    /* role setup: Change the roles you want to have access to the crosslisting features. assocRegex is for the button on the all courses page and assocRegex2 is for the admin page. */
-    var roles = ENV.current_user_roles;
-    var cxbuttonRoles = ["admin", "teacher", "root_admin"];
-    var admincxbuttonRoles = ["admin", "root_admin"];
-    var test1 = cxbuttonRoles.some(el => roles.includes(el));
-    var test2 = admincxbuttonRoles.some(el => roles.includes(el));
-    if( (test1 === true) && (assocRegex.test(window.location.pathname))){
+    /* role setup */
+
+    if( (assocRegex.test(window.location.pathname))){
+        var roles = ENV.current_user_roles;
+        var cxbuttonRoles = ["admin", "teacher", "root_admin"];
+        var test1 = cxbuttonRoles.some(el => roles.includes(el));
+        if(test1===true){
         getCourses();
     }
-    if( (test2 === true) && (assocRegex2.test(window.location.pathname))){
+}
+    if( (assocRegex2.test(window.location.pathname))){
+        var roles2 = ENV.current_user_roles;
+        var admincxbuttonRoles = ["root_admin"];
+        var test2 = admincxbuttonRoles.some(el => roles2.includes(el));
+        if(test2===true){
         add_buttonAdmin();
     }
-    
-    /* This adds the crosslist button to the all courses page and runs the function openDialog when clicked. */
+}
     function add_button() {
         var parent = document.querySelector('div.ic-Action-header__Secondary');
         if (parent) {
-            var el = parent.querySelector('#jj_cross');
+            var el = parent.querySelector('#cs_cross');
             if (!el) {
                 el = document.createElement('button');
                 el.classList.add('Button','element_toggler');
                 el.type = 'button';
-                el.id = 'jj_cross';
+                el.id = 'cs_cross';
                 var icon = document.createElement('i');
                 icon.classList.add('icon-sis-synced');
                 el.appendChild(icon);
@@ -54,13 +60,11 @@
             }
         }
     }
-    /* This function creates the main popup window users interact with the crosslist their courses. 
-    I followed the Canvas Style Guide as much as possible to the CSS already available to create the form elements. */
-        function createDialog() {
-        var el = document.querySelector('#jj_cross_dialog');
+    function createDialog() {
+        var el = document.querySelector('#cs_cross_dialog');
         if (!el) {
             el = document.createElement('form');
-            el.id = 'jj_cross_dialog';
+            el.id = 'cs_cross_dialog';
             el.classList.add('ic-Form-group');
             //Parent Course selection
             var help = document.createElement('div');
@@ -71,12 +75,12 @@
             el5.classList.add('ic-Form-control');
             el.appendChild(el5);
             var label = document.createElement('label');
-            label.htmlFor = 'jj_cross_parentCourse';
+            label.htmlFor = 'cs_cross_parentCourse';
             label.innerHTML = '<a title="Bucket Course:\nThe main course that all other classes will join.">Step 1: Select Bucket Course</a>  (Hover over step for more help)';
             label.classList.add('ic-Label');
             el5.appendChild(label);
             var select = document.createElement('select');
-            select.id = 'jj_cross_parentCourse';
+            select.id = 'cs_cross_parentCourse';
             select.classList.add('ic-Input');
             select.onchange = getChildren;
             el5.appendChild(select);
@@ -88,7 +92,7 @@
             el.appendChild(el6);
             var el7 = document.createElement('legend');
             el7.classList.add('ic-Legend');
-            el7.innerHTML = '<a title="Only choose courses that need the same course materials.">Step 2: Choose Courses to Crosslist Into Bucket Course</a>    (Hover over step for more help)'; 
+            el7.innerHTML = '<a title="Only choose courses that need the same course materials.">Step 2: Choose Courses to Crosslist Into Bucket Course</a>    (Hover over step for more help)';
             el6.appendChild(el7);
             var el8 = document.createElement('div');
             el8.id = 'checkboxes';
@@ -102,7 +106,7 @@
             el.appendChild(el9);
             label = document.createElement('label');
             label.htmlFor = 'course_name';
-            label.innerHTML = '<a title="Naming Convention: Campus Initials Course Name Teacher Name (First Initial.Last Name)\n\nHigh School: Include Semester A or B after Course Name."> Step 3: Set Course Name</a>    (Hover over step for more help)'; 
+            label.innerHTML = '<a title="Naming Convention: Campus Initials Course Name Teacher Name (First Initial.Last Name)\n\nHigh School: Include Semester A or B after Course Name."> Step 3: Set Course Name</a>    (Hover over step for more help)';
             label.classList.add('ic-Label');
             el9.appendChild(label);
             var input = document.createElement('input');
@@ -123,17 +127,17 @@
             ol.classList = 'unstyled';
             el10.appendChild(ol);
             var li = document.createElement('li');
-            li.textContent = 'High School: KHS English 3 A M.Smith';
+            li.textContent = 'KHS English 3 A M.Smith';
             ol.appendChild(li);
             li = document.createElement('li');
-            li.textContent = 'Junior High: BJH Spanish 1 PreAP G.Moreno';
+            li.textContent = 'BJH 8 Science KAP G.Moreno';
             ol.appendChild(li);
             li = document.createElement('li');
-            li.textContent = 'Elementary: KDE 4 Math G.Rorey';
+            li.textContent = 'KDE 4 Math G.Rorey';
             ol.appendChild(li);
             //message flash
             var msg = document.createElement('div');
-            msg.id = 'jj_cross_msg';
+            msg.id = 'cs_cross_msg';
             //msg.classList.add('ic-flash-warning');
             msg.style.display = 'none';
             el.appendChild(msg);
@@ -141,23 +145,20 @@
             parent.appendChild(el);
         }
         setParent();
-            /* opens the help dialog window */
         document.getElementById("action_helper").addEventListener("click", function(){
             openHelp();
         });
     }
-    
-    /* Help dialog window, explains the steps of how to crosslist */
     function createhelpDialog(){
         var el = document.querySelector('#help_dialog');
         if (!el) {
             el = document.createElement('div');
-            el.innerHTML= '<div><b>Crosslist and Name Course:</b> Complete all 3 steps <br/><b>Crosslist and Don\'t Rename Course:</b> Complete steps 1 and 2 <br/><b>Only Rename Course:</b> Complete steps 1 and 3<br/><br/>Hover over each step for more help.</div>'; 
+            el.innerHTML= '<div><b>Crosslist and Name Course:</b> Complete all 3 steps <br/><b>Crosslist and Don\'t Rename Course:</b> Complete steps 1 and 2 <br/><b>Only Rename Course:</b> Complete steps 1 and 3<br/><br/>Hover over each step for more help.</div>';
             el.id = 'help_dialog';
             //Parent Course selection
             //message flash
             var msg = document.createElement('div');
-            msg.id = 'jj_cross_msg';
+            msg.id = 'cs_cross_msg';
             //msg.classList.add('ic-flash-warning');
             msg.style.display = 'none';
             el.appendChild(msg);
@@ -165,8 +166,6 @@
             parent.appendChild(el);
         }
     }
-    
-    /* This function creates the modal window for the help dialog, I have hidden the titlebar close button and disabled the ability to esc close also. */
     function openHelp() {
         try {
             createhelpDialog();
@@ -193,12 +192,10 @@
             console.log(e);
         }
     }
-    
-    /* This function sends an api request to get the current users course list. */
     function getCourses(){
         // Reset global variable errors
         errors= [];
-        var url = "/api/v1/users/self/courses?inlcude[]=term&include[]=sections&per_page=75";
+        var url = "/api/v1/users/self/courses?inlcude[]=term&per_page=100";
         $.ajax({
             'async': true,
             'type': "GET",
@@ -213,36 +210,34 @@
             }
         });
     }
-    /* This function sorts and returns only the most recent term id number. This prevents users from crosslisting into manually created courses. */
-    function getTerm(dedupThings, prop) {
-        var max;
-        for (var i=0 ; i<dedupThings.length ; i++) {
-            if (!max || parseInt(dedupThings[i][prop]) > parseInt(max[prop]))
-                max = dedupThings[i];
-        }
-        return max;
+    function maxTerm(dedupThings){
+      var maxValue = Number.MIN_VALUE;
+  
+      for(var i=0;i<dedupThings.length;i++){
+          if(dedupThings[i].enrollment_term_id>maxValue){
+          maxValue = dedupThings[i].enrollment_term_id;
+         }
+      }
+      return maxValue;
     }
-    
-    /* This function takes the return from getTerm and then filters the courses for only that term id and sets the courses in the dropdown. */ 
-    function setParent(){
-        var toAppend = '';
-        var select = document.getElementById('jj_cross_parentCourse');
-        select.options.length = 0; // clear out existing items
-        var getMax = getTerm(dedupThings, "enrollment_term_id");
-        termId = getMax.enrollment_term_id;
-        $.each(dedupThings, function(i, o){
-            if (o.enrollment_term_id == termId) {
-                toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
-            }
-        });
-        var blank ='';
-        blank += '<option value="">Please select</option>';
-        $('#jj_cross_parentCourse').append(blank);
-        $('#jj_cross_parentCourse').append(toAppend);
-    }
-    
-    /* This function reveals the rest of the form after the parent course is selected. It adds the remaining courses not chosen to be the
-    parent course as check boxes.*/
+      
+      /* This function takes the return from getTerm and then filters the courses for only that term id and sets the courses in the dropdown. */ 
+      function setParent(){
+          var toAppend = '';
+          var select = document.getElementById('cs_cross_parentCourse');
+          select.options.length = 0; // clear out existing items
+          termId = maxTerm(dedupThings);
+          $.each(dedupThings, function(i, o){
+              if (o.enrollment_term_id == termId) {
+                  toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
+              }
+          });
+          var blank ='';
+          blank += '<option value="">Please select</option>';
+          $('#cs_cross_parentCourse').append(blank);
+          $('#cs_cross_parentCourse').append(toAppend);
+      }
+      
     function getChildren(){
         var show = document.getElementById('child_list');
         show.style.visibility = 'visible';
@@ -255,7 +250,7 @@
         if (clear.innerHTML !== null){
             clear.innerHTML = "";
         }
-        parentId = document.getElementById("jj_cross_parentCourse").value;
+        parentId = document.getElementById("cs_cross_parentCourse").value;
         var labelAppend = '';
         var inputAppend = '';
         $.each(dedupThings,function(i,o){
@@ -270,7 +265,6 @@
         });
         $('#checkboxes').append(inputAppend);
     }
-    /* Users are able to change the course name. This sets the text input to wholeName.*/
     function courseName(){
         var newName= [];
         newName = $.map($('input[id="course_name"]'), function(i){return i.value; });
@@ -280,8 +274,6 @@
             }
         });
     }
-    
-    /* This functions sends an API command to change the name of the parent course.*/
     function updateName(){
         var url = "/api/v1/courses/" + parentId + "?course[name]=" + wholeName;
         $.ajax({
@@ -292,7 +284,6 @@
             closeDialog();
         });
     }
-
     /* This function gets the course code to update it. */
     function updatecourseCode(){
         var courseCode = '';
@@ -316,19 +307,21 @@
                             'cache' : false,
                             'url' : url2 ,
                             'type' : 'PUT',
-                        })
+                        });
                 },
             });
     }
-    
-    /* This function creates the modal window for the form dialog box */
     function openDialog() {
         try {
             createDialog();
-            $('#jj_cross_dialog').dialog({
+            var wWidth = $(window).width();
+            var dWidth = wWidth * 0.4;
+            var wHeight = $(window).height();
+            var dHeight = wHeight * 0.8;
+            $('#cs_cross_dialog').dialog({
                 'title' : 'Crosslist Courses',
                 'autoOpen' : false,
-                'closeOnEscape': false,
+                'closeOnEscape': true,
                 'open': function () { $(".ui-dialog-titlebar-close").hide(); $(".ui-dialog").css("top", "10px");},
                 'buttons' : [  {
                     'text' : 'Cancel',
@@ -345,23 +338,19 @@
                 } ],
                 'modal' : true,
                 'resizable' : false,
-                'height' : 'auto',
-                'width' : '40%'
+                'height' : dHeight,
+                'width' : dWidth
             });
-            if (!$('#jj_cross_dialog').dialog('isOpen')) {
-                $('#jj_cross_dialog').dialog('open');
+            if (!$('#cs_cross_dialog').dialog('isOpen')) {
+                $('#cs_cross_dialog').dialog('open');
             }
         } catch (e) {
             console.log(e);
         }
     }
-    
-    /* this function stores the courses checked in step 2 to the array variable */
     function setChild() {
         array = $.map($('input[name="childCourses"]:checked'), function(c){return c.value; });
     }
-    /* This function sends an API command to crosslist the courses stored in the array variable with the parent course.
-    When it's done, it will execute the function to set the course to the users dashboard and then close the window.*/
     function processDialog() {
         $.each(array, function(index,item){
             var childCourse = item;
@@ -384,8 +373,6 @@
                             'url' : url2 ,
                             'type' : 'POST',
                         }).done(function() {
-                            updatecourseCode();
-                            setFavorite();
                             closeDialog();
                         });
                     });
@@ -393,8 +380,6 @@
             });
         });
     }
-    
-    /* Sets the course to the user's dashboard */
     function setFavorite (){
         var url = "/api/v1/users/self/favorites/courses/" + parentId;
         $.ajax({
@@ -403,9 +388,6 @@
             'type' : 'POST',
         });
     }
-    
-    /* If the user omits step 3, a dialog windows pops up verifying if the user doesn't want to rename the course.
-    The confirmation button says crosslist only. If the user does want to rename, they can hit close and rename it in step 3. */
     function nonameDialog(){
         var el = document.querySelector('#nonamedialog');
         if (!el) {
@@ -443,7 +425,6 @@
             parent.appendChild(el);
         }
     }
-    /* This creates the modal window for the noname dialog box */
     function opennonameDialog(){
         try {
             nonameDialog();
@@ -476,8 +457,6 @@
             console.log(e);
         }
     }
-    /* If the user omits step 2, a dialog windows pops up verifying if the user doesn't want to crosslist any courses.
-    The confirmation button says rename only. If the user does want to crosslist, they can hit close and choose courses to crosslist in step 2. */
     function nocrossDialog(){
         var el = document.querySelector('#nocrossdialog');
         if (!el) {
@@ -515,7 +494,6 @@
             parent.appendChild(el);
         }
     }
-    /* Creates the modal window for the nocross dialog box */
     function opennocrossDialog(){
         try {
             nocrossDialog();
@@ -548,8 +526,6 @@
             console.log(e);
         }
     }
-    /* This function processes the request of the main crosslist dialog window. It executes the appropriate functions based on steps completed.
-    If step 2 and step 3 are skipped, it throws an error stating to complete step 2 and or step 3. */
     function submitButton(){
         errors = [];
         courseName();
@@ -557,10 +533,16 @@
         if (wholeName !=='' || array !=+ ''){
             if (wholeName !=='' && array !=+ ''){
                 updateName();
+                updatecourseCode();
+                setFavorite();
                 processDialog();
             } else if (wholeName ==='' && array !=+ ''){
+                updatecourseCode();
+                setFavorite();
                 opennonameDialog();
             }else{
+                updatecourseCode();
+                setFavorite();
                 opennocrossDialog();
             }
         }else{
@@ -568,18 +550,16 @@
             updateMsgs();
         }
     }
-    /* This function closes all dialog windows and launches a success dialog */
     function closeDialog(){
         $('#nocrossDialog').dialog('close');
         $('#nonameDialog').dialog('close');
-        $('#jj_cross_dialog').dialog('close');
-        $('#jj_cross_dialog2').dialog('close');
+        $('#cs_cross_dialog').dialog('close');
+        $('#cs_cross_dialog2').dialog('close');
         window.location.reload(true);
         open_success_dialog();
     }
-    /* This creates error messages at the bottom of the crosslist dialog window */
     function updateMsgs() {
-        var msg = document.getElementById('jj_cross_msg');
+        var msg = document.getElementById('cs_cross_msg');
         if (!msg) {
             return;
         }
@@ -621,7 +601,6 @@
             msg.style.display = 'inline-block';
         }
     }
-    /* This creates the success dialog window */
     function successDialog(){
         var el = document.querySelector('#success_dialog');
         if (!el) {
@@ -651,8 +630,6 @@
             parent.appendChild(el);
         }
     }
-    
-    /* This creates the modal window for the success dialog and it closes with the page refresh in the closeDialog function */
     function open_success_dialog(){
         try {
             successDialog();
@@ -672,18 +649,17 @@
             console.log(e);
         }
     }
-    /* You can remove the following if an admin panel is not needed. I'll come add comments to this section soon! */
     //Admin De-Crosslist
     function searchUser() {
         // Reset global variable errors
         errors = [];
         var userName;
-        var el = document.getElementById('jj_cross_user');
+        var el = document.getElementById('cs_cross_user');
         if (el.value && el.value.trim() !== '') {
             userName = el.value;
             var url = "/api/v1" + acc + "/users?search_term=" + userName + "&per_page=100";
             var userInfo;
-            var x = document.getElementById("jj_cross_user");
+            var x = document.getElementById("cs_cross_user");
             if (x.className === "ic-Input") {
                 x.style.background = "url(https://imagizer.imageshack.us/a/img922/9776/IinEAt.gif) no-repeat right center";
             }
@@ -699,7 +675,7 @@
                     if(data.length > 0){
                         var toAppend = '';
                         var blank = '';
-                        var select = document.getElementById('jj_cross_chooseuser');
+                        var select = document.getElementById('cs_cross_chooseuser');
                         select.options.length = 0; // clear out existing items
                         $.each(data,function(i,o){
                             var n = o.name;
@@ -708,9 +684,9 @@
                             }
                         });
                         blank += '<option value="">Please select</option>';
-                        $('#jj_cross_chooseuser').append(blank);
-                        $('#jj_cross_chooseuser').append(toAppend);
-                        var x = document.getElementById("jj_cross_user");
+                        $('#cs_cross_chooseuser').append(blank);
+                        $('#cs_cross_chooseuser').append(toAppend);
+                        var x = document.getElementById("cs_cross_user");
                         if (x.className === "ic-Input") {
                             x.style.background = "#fff";
                         }
@@ -728,8 +704,8 @@
     function getCoursesAdmin(){
         // Reset global variable errors
         errors= [];
-        user = document.getElementById('jj_cross_chooseuser').value;
-        var url = "/api/v1/users/"+ user +"/courses?include[]=term&per_page=75"; 
+        user = document.getElementById('cs_cross_chooseuser').value;
+        var url = "/api/v1/users/"+ user +"/courses?enrollment_state[]=active&per_page=100&include[]=term";
         $.ajax({
             'async': true,
             'type': "GET",
@@ -742,26 +718,25 @@
                 dedupThings = Array.from(courses.reduce((m, t) => m.set(t.id, t), new Map()).values());
                 var toAppend = '';
                 var blank ='';
-                var select2 = document.getElementById('jj_cross_parentCourse');
+                var select2 = document.getElementById('cs_cross_parentCourse');
                 select2.options.length = 0; // clear out existing items
-                var getMax = getTerm(dedupThings, "enrollment_term_id");
-                termId = getMax.enrollment_term_id;
+                termId = getMax(dedupThings);
                 $.each(dedupThings, function(i, o){
                     if (o.enrollment_term_id == termId) {
                         toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
                     }
                 });
                 blank += '<option value="">Please select</option>';
-                $('#jj_cross_parentCourse').append(blank);
-                $('#jj_cross_parentCourse').append(toAppend);
+                $('#cs_cross_parentCourse').append(blank);
+                $('#cs_cross_parentCourse').append(toAppend);
             }
         });
     }
     function setParentDecross(){
         // Reset global variable errors
         errors= [];
-        user = document.getElementById('jj_cross_chooseuser').value;
-        var url = "/api/v1/users/"+ user +"/courses?include[]=term&include[]=sections&per_page=75"; 
+        user = document.getElementById('cs_cross_chooseuser').value;
+        var url = "/api/v1/users/"+ user +"/courses?per_page=100&include[]=term&include[]=sections";
         $.ajax({
             'async': true,
             'type': "GET",
@@ -774,24 +749,23 @@
                 dedupThings = Array.from(courses.reduce((m, t) => m.set(t.id, t), new Map()).values());
                 var toAppend = '';
                 var blank ='';
-                var select2 = document.getElementById('jj_cross_parentCourse');
+                var select2 = document.getElementById('cs_cross_parentCourse');
                 select2.options.length = 0; // clear out existing items
-                var getMax = getTerm(dedupThings, "enrollment_term_id");
-                termId = getMax.enrollment_term_id;
+                termId = getMax(dedupThings);
                 $.each(dedupThings, function(i, o){
                     if (o.enrollment_term_id == termId && o.sections.length > 1) {
                         toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
                     }
                 });
                 blank += '<option value="">Please select</option>';
-                $('#jj_cross_parentCourse').append(blank);
-                $('#jj_cross_parentCourse').append(toAppend);
+                $('#cs_cross_parentCourse').append(blank);
+                $('#cs_cross_parentCourse').append(toAppend);
             }
         });
     }
     function getSections(){
         var courseSections;
-        parentId = document.getElementById("jj_cross_parentCourse").value;
+        parentId = document.getElementById("cs_cross_parentCourse").value;
         var url = "/api/v1/courses/" + parentId + "/sections?";
         $.ajax({
             'async': true,
@@ -822,10 +796,14 @@
     function openDialog2() {
         try {
             createDialog2();
-            $('#jj_cross_dialog2').dialog({
+            var wWidth = $(window).width();
+            var dWidth = wWidth * 0.4;
+            var wHeight = $(window).height();
+            var dHeight = wHeight * 0.8;
+            $('#cs_cross_dialog2').dialog({
                 'title' : 'Admin De-Crosslist Tool',
                 'autoOpen' : false,
-                'closeOnEscape': false,
+                'closeOnEscape': true,
                 'open': function () { $(".ui-dialog-titlebar-close").hide(); $(".ui-dialog").css("top", "10px");},
                 'buttons' : [  {
                     'text' : 'Cancel',
@@ -841,24 +819,24 @@
                 } ],
                 'modal' : true,
                 'resizable' : false,
-                'height' : 'auto',
-                'width' : '40%',
+                'height' : dHeight,
+                'width' : dWidth,
             });
-            if (!$('#jj_cross_dialog2').dialog('isOpen')) {
-                $('#jj_cross_dialog2').dialog('open');
+            if (!$('#cs_cross_dialog2').dialog('isOpen')) {
+                $('#cs_cross_dialog2').dialog('open');
             }
         } catch (e) {
             console.log(e);
         }
     }
     function createDialog2() {
-        var el = document.querySelector('#jj_cross_dialog2');
+        var el = document.querySelector('#cs_cross_dialog2');
         if (!el) {
             el = document.createElement('form');
-            el.id = 'jj_cross_dialog2';
+            el.id = 'cs_cross_dialog2';
             el.classList.add("ic-Form-control","account_search_form");
             var label = document.createElement('label');
-            label.htmlFor = 'jj_cross_user';
+            label.htmlFor = 'cs_cross_user';
             label.textContent = 'Search For Teacher:';
             label.classList.add('ic-Label');
             el.appendChild(label);
@@ -868,11 +846,11 @@
             el.appendChild(el11);
             var input = document.createElement('input');
             input.classList.add('ic-Input');
-            input.id = 'jj_cross_user';
+            input.id = 'cs_cross_user';
             input.type = 'text';
             input.placeholder = 'Enter Teacher Name';
             el11.appendChild(input);
-            $("#jj_cross_user").keyup(function(event){
+            $("#cs_cross_user").keyup(function(event){
                 if(event.keyCode == 13){
                     $("#btnSearch").click();
                 }
@@ -886,12 +864,12 @@
             el11.appendChild(searchButton);
             //teacher dropdown
             label = document.createElement('label');
-            label.htmlFor = 'jj_cross_choosuser';
+            label.htmlFor = 'cs_cross_choosuser';
             label.textContent = 'Search Results';
             label.classList.add('ic-Label');
             el.appendChild(label);
             var select = document.createElement('select');
-            select.id = 'jj_cross_chooseuser';
+            select.id = 'cs_cross_chooseuser';
             select.classList.add('ic-Input');
             select.placeholder = 'Select Teacher:';
             select.onchange = setParentDecross;
@@ -902,17 +880,17 @@
             var br = document.createElement('hr');
             el5.appendChild(br);
             label = document.createElement('label');
-            label.htmlFor = 'jj_cross_parentCourse';
+            label.htmlFor = 'cs_cross_parentCourse';
             label.textContent = 'Step 1: Select Bucket Course:';
             label.classList.add('ic-Label');
             el5.appendChild(label);
             select = document.createElement('select');
-            select.id = 'jj_cross_parentCourse';
+            select.id = 'cs_cross_parentCourse';
             select.classList.add('ic-Input');
             el5.appendChild(select);
             //message flash
             var msg = document.createElement('div');
-            msg.id = 'jj_cross_msg2';
+            msg.id = 'cs_cross_msg2';
             //msg.classList.add('ic-flash-warning');
             msg.style.display = 'none';
             el.appendChild(msg);
@@ -921,7 +899,7 @@
         }
     }
     function updateMsgs2() {
-        var msg = document.getElementById('jj_cross_msg2');
+        var msg = document.getElementById('cs_cross_msg2');
         if (!msg) {
             return;
         }
@@ -967,16 +945,17 @@
     function add_buttonAdmin(){
 
         var rightDiv = document.querySelector('div#right-side-wrapper');
-            rightDiv.style.display='list-item';
-        
+            rightDiv.style.display='inline';
+            rightDiv.style.width='auto';
         var parent = document.querySelector('aside#right-side');
         if (parent) {
-            var el = parent.querySelector('#jj_cross');
+            var el = parent.querySelector('#cs_cross');
             if (!el) {
                 el = document.createElement('button');
-                el.classList.add('Button','Button--primary','button-sidebar-wide','element_toggler');
+                el.classList.add('Button','Button--primary','Button--small','button-sidebar-wide','element_toggler');
                 el.type = 'button';
-                el.id = 'jj_cross';
+                el.id = 'cs_cross';
+                el.style.width = '175px';
                 var icon = document.createElement('i');
                 icon.classList.add('icon-sis-synced');
                 el.appendChild(icon);
@@ -986,12 +965,13 @@
                 parent.appendChild(el);
             }
             //decrosslist button
-            var el2 = parent.querySelector('#jj_decross');
+            var el2 = parent.querySelector('#cs_decross');
             if (!el2) {
                 el2 = document.createElement('button');
-                el2.classList.add('Button','Button--secondary','button-sidebar-wide','element_toggler');
+                el2.classList.add('Button','Button--secondary','Button--small','button-sidebar-wide','element_toggler');
                 el2.type = 'button';
-                el2.id = 'jj_decross';
+                el2.id = 'cs_decross';
+                el2.style.width = '175px';
                 var icon2 = document.createElement('i');
                 icon2.classList.add('icon-sis-not-synced');
                 el2.appendChild(icon2);
@@ -1003,14 +983,14 @@
         }
     }
     function adminDialog() {
-        var el = document.querySelector('#jj_admin_dialog');
+        var el = document.querySelector('#cs_admin_dialog');
         if (!el) {
             //User Search
             el = document.createElement('form');
-            el.id = 'jj_admin_dialog';
+            el.id = 'cs_admin_dialog';
             el.classList.add("ic-Form-control","account_search_form");
             var label = document.createElement('label');
-            label.htmlFor = 'jj_cross_user';
+            label.htmlFor = 'cs_cross_user';
             label.textContent = 'Search For Teacher:';
             label.classList.add('ic-Label');
             el.appendChild(label);
@@ -1020,7 +1000,7 @@
             el.appendChild(el11);
             var input = document.createElement('input');
             input.classList.add('ic-Input');
-            input.id = 'jj_cross_user';
+            input.id = 'cs_cross_user';
             input.type = 'text';
             input.placeholder = 'Enter Teacher Name';
             el11.appendChild(input);
@@ -1031,19 +1011,19 @@
             searchButton.onclick = searchUser;
             searchButton.classList.add('Button');
             el11.appendChild(searchButton);
-            $("#jj_cross_user").keyup(function(event){
+            $("#cs_cross_user").keyup(function(event){
                 if(event.keyCode == 13){
                     $("#btnSearch").click();
                 }
             });
             //teacher dropdown
             label = document.createElement('label');
-            label.htmlFor = 'jj_cross_Results';
+            label.htmlFor = 'cs_cross_Results';
             label.textContent = 'Search Results';
             label.classList.add('ic-Label');
             el.appendChild(label);
             var select = document.createElement('select');
-            select.id = 'jj_cross_chooseuser';
+            select.id = 'cs_cross_chooseuser';
             select.classList.add('ic-Input');
             select.placeholder = 'Select Teacher:';
             select.onchange = getCoursesAdmin;
@@ -1054,12 +1034,12 @@
             var br = document.createElement('hr');
             el5.appendChild(br);
             label = document.createElement('label');
-            label.htmlFor = 'jj_cross_parentCourse';
+            label.htmlFor = 'cs_cross_parentCourse';
             label.textContent = 'Step 1: Select Bucket Course:';
             label.classList.add('ic-Label');
             el5.appendChild(label);
             select = document.createElement('select');
-            select.id = 'jj_cross_parentCourse';
+            select.id = 'cs_cross_parentCourse';
             select.classList.add('ic-Input');
             select.onchange = getChildren;
             el5.appendChild(select);
@@ -1108,14 +1088,14 @@
             li.textContent = 'KHS English III A M.Smith';
             ol.appendChild(li);
             li = document.createElement('li');
-            li.textContent = 'BJH Spanish 1 PreAP G.Moreno';
+            li.textContent = 'BJH 8 Science KAP G.Moreno';
             ol.appendChild(li);
             li = document.createElement('li');
-            li.textContent = 'Elementary: KDE 4 Math G.Rorey';
+            li.textContent = 'KDE 5 Math G.Rorey';
             ol.appendChild(li);
             //message flash
             var msg = document.createElement('div');
-            msg.id = 'jj_cross_msg';
+            msg.id = 'cs_cross_msg';
             //msg.classList.add('ic-flash-warning');
             msg.style.display = 'none';
             el.appendChild(msg);
@@ -1126,10 +1106,14 @@
     function openDialog3() {
         try {
             adminDialog();
-            $('#jj_admin_dialog').dialog({
+            var wWidth = $(window).width();
+            var dWidth = wWidth * 0.4;
+            var wHeight = $(window).height();
+            var dHeight = wHeight * 0.8;
+            $('#cs_admin_dialog').dialog({
                 'title' : 'Admin Crosslist Tool',
                 'autoOpen' : false,
-                'closeOnEscape': false,
+                'closeOnEscape': true,
                 'open': function () { $(".ui-dialog-titlebar-close").hide(); $(".ui-dialog").css("top", "10px");},
                 'buttons' : [  {
                     'text' : 'Cancel',
@@ -1145,15 +1129,16 @@
                 } ],
                 'modal' : true,
                 'resizable' : false,
-                'height' : 'auto',
-                'width' : '40%',
+                'height' : dHeight,
+                'width' : dWidth,
             });
-            if (!$('#jj_admin_dialog').dialog('isOpen')) {
-                $('#jj_admin_dialog').dialog('open');
+            if (!$('#cs_admin_dialog').dialog('isOpen')) {
+                $('#cs_admin_dialog').dialog('open');
             }
         } catch (e) {
             console.log(e);
         }
     }
-    /* Remove to here if the admin panel isn't needed */
+
+    
 })();
