@@ -226,32 +226,34 @@
         });
     }
     /* This function sorts and returns only the most recent term id number. This prevents users from crosslisting into manually created courses. */
-    function getTerm(dedupThings, prop) {
-        var max;
-        for (var i=0 ; i<dedupThings.length ; i++) {
-            if (!max || parseInt(dedupThings[i][prop]) > parseInt(max[prop]))
-                max = dedupThings[i];
-        }
-        return max;
+    function maxTerm(dedupThings){
+      var maxValue = Number.MIN_VALUE;
+  
+      for(var i=0;i<dedupThings.length;i++){
+          if(dedupThings[i].enrollment_term_id>maxValue){
+          maxValue = dedupThings[i].enrollment_term_id;
+         }
+      }
+      return maxValue;
     }
+      
+      /* This function takes the return from getTerm and then filters the courses for only that term id and sets the courses in the dropdown. */ 
+      function setParent(){
+          var toAppend = '';
+          var select = document.getElementById('jj_cross_parentCourse');
+          select.options.length = 0; // clear out existing items
+          termId = maxTerm(dedupThings);
+          $.each(dedupThings, function(i, o){
+              if (o.enrollment_term_id == termId) {
+                  toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
+              }
+          });
+          var blank ='';
+          blank += '<option value="">Please select</option>';
+          $('#jj_cross_parentCourse').append(blank);
+          $('#jj_cross_parentCourse').append(toAppend);
+      }
     
-    /* This function takes the return from getTerm and then filters the courses for only that term id and sets the courses in the dropdown. */ 
-    function setParent(){
-        var toAppend = '';
-        var select = document.getElementById('jj_cross_parentCourse');
-        select.options.length = 0; // clear out existing items
-        var getMax = getTerm(dedupThings, "enrollment_term_id");
-        termId = getMax.enrollment_term_id;
-        $.each(dedupThings, function(i, o){
-            if (o.enrollment_term_id == termId) {
-                toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
-            }
-        });
-        var blank ='';
-        blank += '<option value="">Please select</option>';
-        $('#jj_cross_parentCourse').append(blank);
-        $('#jj_cross_parentCourse').append(toAppend);
-    }
     
     /* This function reveals the rest of the form after the parent course is selected. It adds the remaining courses not chosen to be the
     parent course as check boxes.*/
@@ -727,8 +729,7 @@
                 var blank ='';
                 var select2 = document.getElementById('jj_cross_parentCourse');
                 select2.options.length = 0; // clear out existing items
-                var getMax = getTerm(dedupThings, "enrollment_term_id");
-                termId = getMax.enrollment_term_id;
+                termId = maxTerm(dedupThings);
                 $.each(dedupThings, function(i, o){
                     if (o.enrollment_term_id == termId) {
                         toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
@@ -759,8 +760,7 @@
                 var blank ='';
                 var select2 = document.getElementById('jj_cross_parentCourse');
                 select2.options.length = 0; // clear out existing items
-                var getMax = getTerm(dedupThings, "enrollment_term_id");
-                termId = getMax.enrollment_term_id;
+                termId = maxTerm(dedupThings);
                 $.each(dedupThings, function(i, o){
                     if (o.enrollment_term_id == termId && o.sections.length > 1) {
                         toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
