@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name         KatyISD Instructor and Admin Crosslisting/Decrosslisting Tools
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      2.1
+// @version      2.2
 // @description  A Canvas UserScript to facilitate crosslisting of courses.
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include     https://*.instructure.com/courses
@@ -720,7 +720,7 @@
                 var blank ='';
                 var select2 = document.getElementById('cs_cross_parentCourse');
                 select2.options.length = 0; // clear out existing items
-                termId = getMax(dedupThings);
+                termId = maxTerm(dedupThings);
                 $.each(dedupThings, function(i, o){
                     if (o.enrollment_term_id == termId) {
                         toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
@@ -751,7 +751,7 @@
                 var blank ='';
                 var select2 = document.getElementById('cs_cross_parentCourse');
                 select2.options.length = 0; // clear out existing items
-                termId = getMax(dedupThings);
+                termId = maxTerm(dedupThings);
                 $.each(dedupThings, function(i, o){
                     if (o.enrollment_term_id == termId && o.sections.length > 1) {
                         toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
