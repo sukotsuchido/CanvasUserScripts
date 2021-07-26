@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         KatyISD Instructor and Admin Crosslisting Tools
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      1.7
+// @version      2.0
 // @description  A Canvas UserScript to facilitate crosslisting of courses.
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include     https://*.instructure.com/courses
@@ -15,6 +15,7 @@
     var acc = window.location.pathname;
     var errors = [];
     var parentId = [];
+    var maxValue = 1;
     var termId = '';
     var courses = {};
     var dedupThings = [];
@@ -215,15 +216,13 @@
     }
     /* This function sorts and returns only the most recent term id number. This prevents users from crosslisting into manually created courses. */
     function maxTerm(dedupThings){
-      var maxValue = Number.MIN_VALUE;
-  
-      for(var i=0;i<dedupThings.length;i++){
-          if(dedupThings[i].enrollment_term_id>maxValue){
-          maxValue = dedupThings[i].enrollment_term_id;
-         }
+     for(var i=0;i<dedupThings.length;i++){
+            if(Number(dedupThings[i].enrollment_term_id) > maxValue){
+                maxValue = Number(dedupThings[i].enrollment_term_id);
+           }
+        }
+       return maxValue;
       }
-      return maxValue;
-    }
       
       /* This function takes the return from getTerm and then filters the courses for only that term id and sets the courses in the dropdown. */ 
       function setParent(){
