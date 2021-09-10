@@ -141,7 +141,7 @@
             var stuID = item;
             var url = "/api/v1/courses/"+courseID+"/enrollments/"+stuID+"?task=delete";
             $.ajax({
-                'async': false,
+                'async': true,
                 'type': "DELETE",
                 'global': true,
                 'dataType': 'JSON',
@@ -183,37 +183,37 @@
             th.textContent = 'Student Name';
             th.onmouseover= function(){
                 this.style.cursor='pointer';
-            }
+            };
             th.onclick = function (){
                 sortTable(1);
-            }
+            };
             tr.appendChild(th);
             th = document.createElement('TH');
             th.textContent = 'Section';
             th.onmouseover= function(){
                 this.style.cursor='pointer';
-            }
+            };
             th.onclick = function (){
                 sortTable(2);
-            }
+            };
             tr.appendChild(th);
             th = document.createElement('TH');
             th.textContent = 'Enrollment Date';
             th.onmouseover= function(){
                 this.style.cursor='pointer';
-            }
+            };
             th.onclick = function (){
                 sortTable(3);
-            }
+            };
             tr.appendChild(th);
             th = document.createElement('TH');
             th.textContent = 'Last Activity';
             th.onmouseover= function(){
                 this.style.cursor='pointer';
-            }
+            };
             th.onclick = function (){
                 sortTable(4);
-            }
+            };
             tr.appendChild(th);
             var tbody = document.createElement('tbody');
             tbody.id = 'inner_table';
