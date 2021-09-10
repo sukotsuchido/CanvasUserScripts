@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Canvas Student Course Enrollment Manager
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      1.5
+// @version      1.6
 // @description  A Canvas UserScript to manage course enrollments
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include     https://*.instructure.com/courses/*/users
