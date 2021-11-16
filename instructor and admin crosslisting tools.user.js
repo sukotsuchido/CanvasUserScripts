@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         KatyISD Instructor and Admin Crosslisting Tools
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      2.0
+// @version      2.1
 // @description  A Canvas UserScript to facilitate crosslisting of courses.
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include     https://*.instructure.com/courses
@@ -199,7 +199,7 @@
     function getCourses(){
         // Reset global variable errors
         errors= [];
-        var url = "/api/v1/users/self/courses?inlcude[]=term&include[]=sections&per_page=75";
+        var url = "/api/v1/users/self/courses?inlcude[]=term&include[]=sections&per_page=100";
         $.ajax({
             'async': true,
             'type': "GET",
@@ -231,7 +231,7 @@
           select.options.length = 0; // clear out existing items
           termId = maxTerm(dedupThings);
           $.each(dedupThings, function(i, o){
-              if (o.enrollment_term_id == termId) {
+              if (o.enrollment_term_id == termId && o.enrollments[0].type == "teacher") {
                   toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
               }
           });
@@ -259,7 +259,7 @@
         var labelAppend = '';
         var inputAppend = '';
         $.each(dedupThings,function(i,o){
-            if (o.enrollment_term_id == termId && o.id != parentId) {
+            if (o.enrollment_term_id == termId && o.enrollments[0].type == "teacher" && o.id != parentId) {
                 labelAppend += '<input type="checkbox" id="'+o.id+'" name="childCourses" value="'+o.id+'">'+'<label class="ic-Label" for="'+o.id+'">'+o.name+'</label>';
                 clear3=labelAppend;
                 if (labelAppend !== null){
@@ -700,7 +700,7 @@
         // Reset global variable errors
         errors= [];
         user = document.getElementById('jj_cross_chooseuser').value;
-        var url = "/api/v1/users/"+ user +"/courses?include[]=term&per_page=75"; 
+        var url = "/api/v1/users/"+ user +"/courses?include[]=term&per_page=100"; 
         $.ajax({
             'async': true,
             'type': "GET",
@@ -718,7 +718,7 @@
                 
                 termId = maxTerm(dedupThings);
                 $.each(dedupThings, function(i, o){
-                    if (o.enrollment_term_id == termId) {
+                    if (o.enrollment_term_id == termId && o.enrollments[0].type == "teacher") {
                         toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
                     }
                 });
@@ -732,7 +732,7 @@
         // Reset global variable errors
         errors= [];
         user = document.getElementById('jj_cross_chooseuser').value;
-        var url = "/api/v1/users/"+ user +"/courses?include[]=term&include[]=sections&per_page=75"; 
+        var url = "/api/v1/users/"+ user +"/courses?include[]=term&include[]=sections&per_page=100"; 
         $.ajax({
             'async': true,
             'type': "GET",
@@ -750,7 +750,7 @@
               
                 termId = maxTerm(dedupThings);
                 $.each(dedupThings, function(i, o){
-                    if (o.enrollment_term_id == termId && o.sections.length > 1) {
+                    if (o.enrollment_term_id == termId && o.enrollments[0].type == "teacher" && o.sections.length > 1) {
                         toAppend += '<option value="'+o.id+'">'+o.name+'</option>';
                     }
                 });
