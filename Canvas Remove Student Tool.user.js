@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Canvas Student Course Enrollment Manager
+// @name         Canvas Student Bulk Remove Enrollments Tool
 // @namespace    https://github.com/sukotsuchido/CanvasUserScripts
-// @version      1.6
-// @description  A Canvas UserScript to manage course enrollments
+// @version      2.0
+// @description  A Canvas UserScript to bulk remove student enrollments from a course.
 // @author       Chad Scott (ChadScott@katyisd.org)
 // @include     https://*.instructure.com/courses/*/users
 // @require     https://code.jquery.com/jquery-3.4.1.min.js
@@ -18,7 +18,11 @@
     var courseID = $(location).attr('pathname');
     courseID.indexOf(1);
     courseID = courseID.split("/")[2];
-    var pageNum = 0;
+    var currURL = false;
+    var nextURL;
+    var results = []
+    var coursesLength;
+    var allStudents = [];
     /* role setup */
     var roles = ENV.current_user_roles;
     var buttonRoles = ["admin", "root_admin"];
@@ -39,7 +43,7 @@
                 var icon = document.createElement('i');
                 icon.classList.add('icon-user');
                 el.appendChild(icon);
-                var txt = document.createTextNode(' Manage Course Enrollments');
+                var txt = document.createTextNode(' Remove Bulk Student Enrollments');
                 el.appendChild(txt);
                 el.addEventListener('click', openDialog);
                 parent.prepend(el);
@@ -48,9 +52,9 @@
     }
 
     function getSections(){
-        var url = "/api/v1/courses/"+courseID+"/sections?&per_page=100";
+        var url = "/api/v1/courses/"+courseID+"/sections?&per_page=99";
         $.ajax({
-            'async': true,
+            'async': false,
             'type': "GET",
             'global': true,
             'dataType': 'JSON',
@@ -64,23 +68,28 @@
                     var sectionName = o.name;
 
                     sections.push({
-    key:   sectionID,
-    value: sectionName
-});
+                        key:   sectionID,
+                        value: sectionName
+                    });
 
                 });
-
             }
-    });
+        });
     }
+
+
 
     function getStudents(){
         // Reset global variable errors
         errors= [];
-        document.getElementById('moreStu').value = ++pageNum;
-        var url = "/api/v1/courses/"+courseID+"/enrollments?type[]=StudentEnrollment&per_page=100&page="+pageNum;
-        $.ajax({
-            'async': true,
+        var url;
+        if(!currURL){
+            url = "/api/v1/courses/"+courseID+"/enrollments?type[]=StudentEnrollment&per_page=99&page=";
+        }else{
+            url = "/api/v1/courses/"+courseID+"/enrollments?type[]=StudentEnrollment&page="+nextURL;
+        };
+        var jqxhr = $.ajax({
+            'async': false,
             'type': "GET",
             'global': true,
             'dataType': 'JSON',
@@ -88,74 +97,128 @@
             'contentType': "application/json",
             'url': url,
             'success': function (data, textStatus, response) {
-                var toAppend;
-                $.each(data,function(i,o){
-                    var dateStr;
-                    var dateEnrStr;
+                const linkTxt = response.getResponseHeader('link');
+                coursesLength = data.length;
+                results.push(data);
 
-                    var stuSectionID;
-                    var stuSectionName;
-                    stuSectionID = o.course_section_id;
+                let links = linkTxt.split(",");
+                let nextRegEx = new RegExp('&page=(.*)>; rel="next"');
+                for (let i = 0; i < links.length; i++) {
+                    let matches = nextRegEx.exec(links[i]);
 
-                    stuSectionName = sections.find(item => item.key === stuSectionID).value;
-
-
-
-                    var date2 = new Date(o.created_at);
-                        var day2 = date2.getDate();
-                        var year2 = date2.getFullYear();
-                        var month2 = date2.getMonth()+1;
-                        if(day2<10){
-                            day2='0'+day2;
-                        }
-                        if(month2<10){
-                            month2='0'+month2;
-                        }
-                        dateEnrStr = month2+"/"+day2+"/"+year2;
-
-                    //last activity date
-                    if(o.last_activity_at == null){
-                        dateStr = "None";
-                    }else{
-                        var date = new Date(o.last_activity_at);
-                        var day = date.getDate();
-                        var year = date.getFullYear();
-                        var month = date.getMonth()+1;
-                        if(day<10){
-                            day='0'+day;
-                        }
-                        if(month<10){
-                            month='0'+month;
-                        }
-                        dateStr = month+"/"+day+"/"+year;
+                    if (matches && matches[1]) {
+                        nextURL = matches[1];
                     }
-
-                    toAppend += '<tr><td><input type="checkbox" id="'+o.id+'" name="students" value="'+o.id+'"></td><td>'+o.user.sortable_name+'</td><td>'+stuSectionName+'</td><td>'+dateEnrStr+'</td><td>'+dateStr+'</td></tr>';
-                });
-                $('#table_header').append(toAppend);
+                }
             }
         });
+        if(currURL!=nextURL){
+            currURL = nextURL;
+            getStudents();
+        };
+        allStudents = results.flat();
     }
-    function deleteEnrollments(){
-        $.each(array, function(index,item){
-            var stuID = item;
-            var url = "/api/v1/courses/"+courseID+"/enrollments/"+stuID+"?task=delete";
-            $.ajax({
-                'async': true,
-                'type': "DELETE",
-                'global': true,
-                'dataType': 'JSON',
-                'data': JSON.stringify(),
-                'contentType': "application/json",
-                'url': url,
-                'success': open_success_dialog
-            });
-            console.log(stuID);
+    function setStudents(){
+        var toAppend = '';
+        $.each(allStudents,function(i,o){
+            var dateStr;
+            var dateEnrStr;
+
+            var stuSectionID;
+            var stuSectionName;
+            stuSectionID = o.course_section_id;
+
+            stuSectionName = sections.find(item => item.key === stuSectionID).value;
+
+            var date2 = new Date(o.created_at);
+            var day2 = date2.getDate();
+            var year2 = date2.getFullYear();
+            var month2 = date2.getMonth()+1;
+            if(day2<10){
+                day2='0'+day2;
+            }
+            if(month2<10){
+                month2='0'+month2;
+            }
+            dateEnrStr = month2+"/"+day2+"/"+year2;
+
+            //last activity date
+            if(o.last_activity_at == null){
+                dateStr = "None";
+            }else{
+                var date = new Date(o.last_activity_at);
+                var day = date.getDate();
+                var year = date.getFullYear();
+                var month = date.getMonth()+1;
+                if(day<10){
+                    day='0'+day;
+                }
+                if(month<10){
+                    month='0'+month;
+                }
+                dateStr = month+"/"+day+"/"+year;
+            }
+
+            toAppend += '<tr><td><input type="checkbox" id="'+o.id+'" name="students" value="'+o.id+'"></td><td>'+o.user.sortable_name+'</td><td>'+stuSectionName+'</td><td>'+dateEnrStr+'</td><td>'+dateStr+'</td></tr>';
         });
-        window.location.reload(true);
+        $('#table_header').append(toAppend);
+    }
+
+    async function sleep(sleepTime) {
+        return new Promise((resolve) => setTimeout(resolve, sleepTime));
     }
 
 
+    async function deleteEnrollments(){
+        window.requestAnimationFrame(() => {
+            var footer = document.querySelector('#progress');
+            footer.style.background = "url(https://imagizer.imageshack.us/a/img922/9776/IinEAt.gif) no-repeat right center";
+            $("<div />").css({
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                left: 0,
+                top: 0,
+                zIndex: 1000000,
+            }).appendTo($("#events_dialog").css("position", "relative"));
+
+            /*var main = document.querySelector('#events_dialog');
+            var overlay = document.createElement('div');
+
+            overlay.style.position="absolute";
+            overlay.style.width="100%";
+            overlay.style.height="100%";
+            overlay.style.left="0";
+            overlay.style.top="0";
+            overlay.style.zIndex="10000000";
+            overlay.style.background="grey";
+            overlay.style.opacity="0.5";
+            main.app*/
+
+        } );
+        await sleep(500);
+
+        while (array.length > 0){
+            var arrayBatch = array.splice(0,40);
+            await sleep(5000);
+
+            $.each(arrayBatch, function(index,item){
+
+                var stuID = item;
+                var url = "/api/v1/courses/"+courseID+"/enrollments/"+stuID+"?task=delete";
+                $.ajax({
+                    'async': true,
+                    'cache': false,
+                    'type': "DELETE",
+                    'dataType': 'JSON',
+                    'data': JSON.stringify(),
+                    'contentType': "application/json",
+                    'url': url
+                });
+            });
+        }
+        open_success_dialog();
+    }
 
     function createDialog() {
         var el = document.querySelector('#events_dialog');
@@ -219,20 +282,8 @@
             tbody.id = 'inner_table';
             tbody.onchange= setEvents;
             table.appendChild(tbody);
-            var hr = document.createElement('HR');
-            el.appendChild(hr);
-            var incrButton = document.createElement('button');
-            incrButton.classList.add('Button','button-primary','element_toggler');
-            incrButton.type = 'button';
-            incrButton.id = 'moreStu';
-            incrButton.value = 0;
-            var icon = document.createElement('i');
-            icon.classList.add('icon-user');
-            incrButton.appendChild(icon);
-            var txt = document.createTextNode(' Add More');
-            incrButton.appendChild(txt);
-            incrButton.addEventListener('click', getStudents);
-            el.appendChild(incrButton);
+
+
 
             //message flash
             var msg = document.createElement('div');
@@ -242,62 +293,28 @@
             el.appendChild(msg);
             var parent = document.querySelector('body');
             parent.appendChild(el);
+
         }
+
         $('#select-all').click(function(event) {
             var state = this.checked; $(':checkbox').each(function() { this.checked = state; });
         });
+
     }
 
 
     function setEvents() {
         array = $.map($('input[name="students"]:checked'), function(c){return c.value; });
     }
-    function openDialog() {
-        try {
-            getSections();
-            createDialog();
-            $('#events_dialog').dialog({
-                'title' : 'Manage Student Enrollments',
-                'autoOpen' : false,
-                'closeOnEscape': false,
-                'open': function () { $(".ui-dialog-titlebar-close").hide(); $(".ui-dialog").css("top", "10px");},
-                'buttons' : [  {
-                    'text' : 'Cancel',
-                    'click' : function() {
-                        $(this).dialog('destroy').remove();
-                        pageNum=0;
-                        errors = [];
-                        updateMsgs();
-                    }
-                },{
-                    'text' : 'Remove Students',
-                    'class': 'Button Button--primary',
-                    'click' : deleteEnrollments
-
-                } ],
-                'modal' : true,
-                'resizable' : false,
-                'height' : '600',
-                'width' : '40%',
-                'scrollable' : true
-            });
-            if (!$('#events_dialog').dialog('isOpen')) {
-                $('#events_dialog').dialog('open');
-            }
-        } catch (e) {
-            console.log(e);
-        }
-        getStudents();
-    }
 
     function successDialog(){
-        var el = document.querySelector('#success_dialog');
-        if (!el) {
-            el = document.createElement('div');
-            el.id = 'success_dialog';
+        var el2 = document.querySelector('#success_dialog');
+        if (!el2) {
+            el2 = document.createElement('div');
+            el2.id = 'success_dialog';
             var div1 = document.createElement('div');
             div1.classList.add('ic-flash-success');
-            el.appendChild(div1);
+            el2.appendChild(div1);
             var div2 = document.createElement('div');
             div2.classList.add('ic-flash__icon');
             div2.classList.add('aria-hidden="true"');
@@ -307,19 +324,13 @@
             div2.appendChild(icon);
             var msg = document.createTextNode("The action completed successfully!");
             div1.appendChild(msg);
-            var button = document.createElement('button');
-            button.type = 'button';
-            button.classList.add("Button", "Button--icon-action", "close_link");
-            el.appendChild(button);
-            icon = document.createElement('i');
-            icon.classList.add('ic-icon-x');
-            icon.classList.add('aria-hidden="true"');
-            button.appendChild(icon);
             var parent = document.querySelector('body');
-            parent.appendChild(el);
+            parent.appendChild(el2);
         }
+
     }
-    function open_success_dialog(){
+
+    async function open_success_dialog(){
         try {
             successDialog();
             $('#success_dialog').dialog({
@@ -331,13 +342,83 @@
                 'height' : 'auto',
                 'width' : '40%',
             });
+
             if (!$('#success_dialog').dialog('isOpen')) {
                 $('#success_dialog').dialog('open');
+
             }
+
+
         } catch (e) {
             console.log(e);
         }
+        window.requestAnimationFrame(() => {
+            window.location.reload(true);
+        } );
+        await sleep(2000);
+
     }
+
+    async function openDialog() {
+        try {
+            window.requestAnimationFrame(() => {
+                createDialog();
+                $('#events_dialog').dialog({
+                    'title' : 'Manage Student Enrollments',
+                    'autoOpen' : false,
+                    'closeOnEscape': false,
+                    'open': function () { $(".ui-dialog-titlebar-close").hide(); $(".ui-dialog").css("top", "10px");
+                                         $(".ui-dialog-buttonpane").prop("id","footerDiv");
+                                         var progress = document.createElement('div');
+                                         progress.id='progress';
+                                         progress.style.width='65%';
+                                         progress.style.float='left';
+                                         progress.style.height='40px';
+                                         progress.style.background = "url(https://imagizer.imageshack.us/a/img922/9776/IinEAt.gif) no-repeat right center";
+                                         var footer = document.querySelector('#footerDiv');
+                                         footer.style.backgroundColor='white';
+                                         footer.insertBefore(progress, footer.childNodes[0]);
+                                        },
+                    'buttons' : [{
+                        'text' : 'Cancel',
+                        'click' : function() {
+                            results = []
+                            coursesLength;
+                            allStudents = [];
+                            $(this).dialog('destroy').remove();
+                            errors = [];
+                            updateMsgs();
+                        }
+                    },{
+                        'text' : 'Remove Students',
+                        'class': 'Button Button--primary',
+                        'click' : deleteEnrollments
+
+
+                    } ],
+                    'modal' : true,
+                    'resizable' : false,
+                    'height' : '600',
+                    'width' : '40%',
+                    'scrollable' : true
+                });
+                if (!$('#events_dialog').dialog('isOpen')) {
+                    $('#events_dialog').dialog('open');
+                }
+            } );
+        } catch (e) {
+            console.log(e);
+        }
+        await sleep(500);
+
+        getSections();
+        getStudents();
+        setStudents();
+        var x = document.querySelector('#progress');
+        x.style.background = "none";
+    }
+
+
     function sortTable(n) {
         var el = document.querySelector('#events_dialog');
         if (el) {
