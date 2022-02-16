@@ -181,20 +181,6 @@
                 top: 0,
                 zIndex: 1000000,
             }).appendTo($("#events_dialog").css("position", "relative"));
-
-            /*var main = document.querySelector('#events_dialog');
-            var overlay = document.createElement('div');
-
-            overlay.style.position="absolute";
-            overlay.style.width="100%";
-            overlay.style.height="100%";
-            overlay.style.left="0";
-            overlay.style.top="0";
-            overlay.style.zIndex="10000000";
-            overlay.style.background="grey";
-            overlay.style.opacity="0.5";
-            main.app*/
-
         } );
         await sleep(500);
 
