@@ -1,4 +1,8 @@
 # CanvasUserScripts
+<b>No Longer Supported</b>
+All - I've moved on and my current school does not use Canvas, so unfortunately, I will not be able to maintain these any longer.
+</hr>
+
 UserScripts for Canvas LMS
 
 <b>Canvas Crosslisting.user.js</b> is a very basic tool in which the user inputs the course number of the parent course and child course and then the two are crosslisted together.
