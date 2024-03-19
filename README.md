@@ -39,3 +39,5 @@ UserScripts for Canvas LMS
   </ol>
   
   <b>Remove Color Overlay</b> is a script that removes the color overlay of courses with course images on the Dashboard. This is a workaround since admin is unable to set the default Dashboard experience for users.
+
+  <b>Acess Catalog</b> acesscatalog.user.js is a script to remove the "Non-CMS staff account" popups.
